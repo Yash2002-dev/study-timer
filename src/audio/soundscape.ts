@@ -31,11 +31,21 @@ class SoundscapeEngine {
         (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
       this.ctx = new AudioContextClass();
 
-      // Master output bus with smooth limiter
+      // Master output bus with smooth broadcast-grade limiter
       this.masterGain = this.ctx.createGain();
       const initialVol = this.isMuted ? 0 : this.masterVolume;
       this.masterGain.gain.setValueAtTime(initialVol, this.ctx.currentTime);
-      this.masterGain.connect(this.ctx.destination);
+
+      // Studio limiter to guarantee zero clipping, distortion, or crackling during multi-track blending
+      const limiter = this.ctx.createDynamicsCompressor();
+      limiter.threshold.setValueAtTime(-4, this.ctx.currentTime);
+      limiter.knee.setValueAtTime(4, this.ctx.currentTime);
+      limiter.ratio.setValueAtTime(18, this.ctx.currentTime);
+      limiter.attack.setValueAtTime(0.002, this.ctx.currentTime);
+      limiter.release.setValueAtTime(0.15, this.ctx.currentTime);
+
+      this.masterGain.connect(limiter);
+      limiter.connect(this.ctx.destination);
       this.isInitialized = true;
     }
 

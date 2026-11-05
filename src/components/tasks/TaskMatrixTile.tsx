@@ -68,12 +68,12 @@ export const TaskMatrixTile: React.FC<TaskMatrixTileProps> = ({
   };
 
   return (
-    <div className="bg-obsidian-850 border border-white/10 rounded-3xl p-6 shadow-xl relative overflow-hidden flex flex-col justify-between">
+    <div className="bento-card rounded-3xl p-6 shadow-xl relative overflow-hidden flex flex-col justify-between">
       {/* Top Header */}
       <div>
-        <div className="flex items-center justify-between border-b border-white/5 pb-4 mb-5">
+        <div className="flex items-center justify-between border-b border-white/[0.06] pb-4 mb-5">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+            <div className="w-8 h-8 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shadow-sm">
               <Target className="w-4 h-4" />
             </div>
             <div>
@@ -84,22 +84,22 @@ export const TaskMatrixTile: React.FC<TaskMatrixTileProps> = ({
             </div>
           </div>
 
-          <div className="flex items-center gap-2 text-xs font-mono bg-obsidian-900 border border-white/5 px-2.5 py-1 rounded-xl">
+          <div className="flex items-center gap-2 text-xs font-mono bg-obsidian-900 border border-white/[0.06] px-2.5 py-1 rounded-xl shadow-sm">
             <Flame className="w-3.5 h-3.5 text-amber-400" />
             <span className="text-slate-400">Streak:</span>
-            <span className="text-amber-300 font-bold">1 Day</span>
+            <span className="text-amber-300 font-bold tabular-nums">1 Day</span>
           </div>
         </div>
 
         {/* Daily Goal Progress Bar Section */}
-        <div className="bg-obsidian-900/80 border border-white/5 rounded-2xl p-4 mb-5">
+        <div className="bg-obsidian-900/80 border border-white/[0.06] rounded-2xl p-4 mb-5 shadow-inner">
           <div className="flex items-center justify-between mb-2">
             <span className="text-xs font-semibold text-white flex items-center gap-1.5">
               <Clock className="w-3.5 h-3.5 text-indigo-400" />
               Daily Study Target:
             </span>
             <div className="flex items-center gap-2">
-              <span className="text-xs font-mono text-slate-300">
+              <span className="text-xs font-mono text-slate-300 tabular-nums">
                 <strong className="text-white font-bold">{completedHours}h {completedMins}m</strong>
                 <span className="text-slate-500"> / {Math.round(targetMinutes / 60)}h</span>
               </span>
@@ -110,14 +110,14 @@ export const TaskMatrixTile: React.FC<TaskMatrixTileProps> = ({
                   <button
                     onClick={() => onUpdateTargetMinutes(Math.max(30, targetMinutes - 30))}
                     title="Decrease Target by 30m"
-                    className="w-5 h-5 rounded bg-obsidian-800 text-slate-400 hover:text-white flex items-center justify-center text-xs font-mono border border-white/5"
+                    className="btn-tactile w-5 h-5 rounded-lg bg-obsidian-800 text-slate-400 hover:text-white flex items-center justify-center text-xs font-mono border border-white/[0.06] hover:border-white/20 active:scale-[0.98]"
                   >
                     -
                   </button>
                   <button
                     onClick={() => onUpdateTargetMinutes(targetMinutes + 30)}
                     title="Increase Target by 30m"
-                    className="w-5 h-5 rounded bg-obsidian-800 text-slate-400 hover:text-white flex items-center justify-center text-xs font-mono border border-white/5"
+                    className="btn-tactile w-5 h-5 rounded-lg bg-obsidian-800 text-slate-400 hover:text-white flex items-center justify-center text-xs font-mono border border-white/[0.06] hover:border-white/20 active:scale-[0.98]"
                   >
                     +
                   </button>
@@ -127,7 +127,7 @@ export const TaskMatrixTile: React.FC<TaskMatrixTileProps> = ({
           </div>
 
           {/* Progress Bar with Zero CLS */}
-          <div className="w-full bg-obsidian-950 border border-white/5 rounded-full h-3 overflow-hidden p-0.5 mb-2">
+          <div className="w-full bg-obsidian-950 border border-white/[0.06] rounded-full h-3 overflow-hidden p-0.5 mb-2 shadow-inner">
             <div
               className="h-full rounded-full bg-gradient-to-r from-emerald-500 via-teal-400 to-indigo-500 transition-all duration-500"
               style={{ width: `${progressPercent}%` }}
@@ -135,8 +135,8 @@ export const TaskMatrixTile: React.FC<TaskMatrixTileProps> = ({
           </div>
 
           <div className="flex items-center justify-between text-[11px] font-mono text-slate-400">
-            <span>{progressPercent}% of target achieved</span>
-            <span>{completedSessionsCount} sessions completed</span>
+            <span className="tabular-nums">{progressPercent}% of target achieved</span>
+            <span className="tabular-nums">{completedSessionsCount} sessions completed</span>
           </div>
         </div>
 
@@ -165,12 +165,12 @@ export const TaskMatrixTile: React.FC<TaskMatrixTileProps> = ({
                 value={newTagInput}
                 onChange={(e) => setNewTagInput(e.target.value)}
                 maxLength={25}
-                className="flex-1 bg-obsidian-900 border border-white/10 rounded-xl px-3 py-1.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                className="flex-1 bg-obsidian-900 border border-white/[0.06] rounded-xl px-3 py-1.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                 autoFocus
               />
               <button
                 type="submit"
-                className="px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-medium flex items-center gap-1 shadow-md"
+                className="btn-tactile px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-medium flex items-center gap-1 shadow-md active:scale-[0.98]"
               >
                 <Check className="w-3 h-3" />
                 Save
@@ -186,15 +186,15 @@ export const TaskMatrixTile: React.FC<TaskMatrixTileProps> = ({
                 <button
                   key={tag.id}
                   onClick={() => onSelectTag(tag)}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium transition-all duration-200 border active:scale-95 ${
+                  className={`btn-tactile flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium transition-all duration-200 border active:scale-[0.98] ${
                     isSelected
                       ? 'bg-obsidian-800 border-indigo-500/50 text-white shadow-md shadow-indigo-500/10 scale-[1.02]'
-                      : 'bg-obsidian-900/70 border-white/5 text-slate-400 hover:text-slate-200 hover:border-white/15'
+                      : 'bg-obsidian-900/70 border-white/[0.06] text-slate-400 hover:text-slate-200 hover:border-white/15'
                   }`}
                 >
                   <span
-                    className="w-2 h-2 rounded-full"
-                    style={{ backgroundColor: tag.color }}
+                    className="w-2 h-2 rounded-full shadow-[0_0_6px]"
+                    style={{ backgroundColor: tag.color, color: tag.color }}
                   />
                   <span>{tag.label}</span>
                   {isSelected && <Sparkles className="w-2.5 h-2.5 text-indigo-400 ml-0.5" />}
@@ -207,4 +207,3 @@ export const TaskMatrixTile: React.FC<TaskMatrixTileProps> = ({
     </div>
   );
 };
-

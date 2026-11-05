@@ -41,10 +41,10 @@ export const TimerDial: React.FC<TimerDialProps> = ({
   const radius = (size - strokeWidth * 2) / 2;
   const center = size / 2;
   const circumference = 2 * Math.PI * radius;
-  // Progress fills up clockwise
+  // Progress fills up clockwise smoothly
   const strokeDashoffset = circumference * (1 - Math.min(1, Math.max(0, progressRatio)));
 
-  // Mode-based gradient and glow colors
+  // Mode-based gradient and glow accents
   const getThemeColors = (currentMode: TimerMode) => {
     switch (currentMode) {
       case 'shortBreak':
@@ -52,8 +52,8 @@ export const TimerDial: React.FC<TimerDialProps> = ({
         return {
           gradientStart: '#10B981',
           gradientEnd: '#14B8A6',
-          glow: 'rgba(16, 185, 129, 0.45)',
-          trackGlow: 'rgba(16, 185, 129, 0.15)',
+          glow: 'rgba(16, 185, 129, 0.40)',
+          innerGlow: 'rgba(20, 184, 166, 0.25)',
           badgeBg: 'bg-emerald-500/15',
           badgeText: 'text-emerald-300',
           badgeBorder: 'border-emerald-500/30',
@@ -63,8 +63,8 @@ export const TimerDial: React.FC<TimerDialProps> = ({
         return {
           gradientStart: '#06B6D4',
           gradientEnd: '#3B82F6',
-          glow: 'rgba(6, 182, 212, 0.45)',
-          trackGlow: 'rgba(6, 182, 212, 0.15)',
+          glow: 'rgba(6, 182, 212, 0.40)',
+          innerGlow: 'rgba(59, 130, 246, 0.25)',
           badgeBg: 'bg-cyan-500/15',
           badgeText: 'text-cyan-300',
           badgeBorder: 'border-cyan-500/30',
@@ -72,10 +72,10 @@ export const TimerDial: React.FC<TimerDialProps> = ({
         };
       case 'custom':
         return {
-          gradientStart: '#8B5CF6',
+          gradientStart: '#A855F7',
           gradientEnd: '#EC4899',
-          glow: 'rgba(139, 92, 246, 0.45)',
-          trackGlow: 'rgba(139, 92, 246, 0.15)',
+          glow: 'rgba(168, 85, 247, 0.40)',
+          innerGlow: 'rgba(236, 72, 153, 0.25)',
           badgeBg: 'bg-purple-500/15',
           badgeText: 'text-purple-300',
           badgeBorder: 'border-purple-500/30',
@@ -86,8 +86,8 @@ export const TimerDial: React.FC<TimerDialProps> = ({
         return {
           gradientStart: '#6366F1',
           gradientEnd: '#8B5CF6',
-          glow: 'rgba(99, 102, 241, 0.50)',
-          trackGlow: 'rgba(99, 102, 241, 0.15)',
+          glow: 'rgba(99, 102, 241, 0.45)',
+          innerGlow: 'rgba(139, 92, 246, 0.25)',
           badgeBg: 'bg-indigo-500/15',
           badgeText: 'text-indigo-300',
           badgeBorder: 'border-indigo-500/30',
@@ -112,19 +112,28 @@ export const TimerDial: React.FC<TimerDialProps> = ({
 
   return (
     <div className="flex flex-col items-center justify-center w-full select-none">
-      {/* Central Dial Housing */}
+      {/* Central Dial Housing with Radial Glow Accents */}
       <div 
         className="relative flex items-center justify-center transition-transform duration-500"
         style={{ width: size, height: size }}
       >
-        {/* Ambient Breathing Glow Aura behind the Dial */}
+        {/* Subtle Outer Radial Glow Accent */}
         <div 
-          className={`absolute inset-0 rounded-full blur-2xl transition-opacity duration-1000 pointer-events-none ${
-            isRunning ? 'opacity-90 animate-pulse' : 'opacity-25'
+          className={`absolute -inset-8 rounded-full blur-3xl pointer-events-none transition-all duration-1000 ${
+            isRunning ? 'opacity-85 animate-breathing-glow' : 'opacity-20'
           }`}
           style={{
-            backgroundColor: theme.trackGlow,
-            transform: isRunning ? 'scale(1.08)' : 'scale(0.95)',
+            background: `radial-gradient(circle, ${theme.glow} 0%, rgba(0,0,0,0) 70%)`,
+          }}
+        />
+
+        {/* Subtle Inner Core Bloom Glow Accent */}
+        <div 
+          className={`absolute -inset-2 rounded-full blur-xl pointer-events-none transition-all duration-700 ${
+            isRunning ? 'opacity-90' : 'opacity-15'
+          }`}
+          style={{
+            background: `radial-gradient(circle, ${theme.innerGlow} 0%, rgba(0,0,0,0) 65%)`,
           }}
         />
 
@@ -142,7 +151,7 @@ export const TimerDial: React.FC<TimerDialProps> = ({
             </linearGradient>
 
             <filter id="dial-glow" x="-20%" y="-20%" width="140%" height="140%">
-              <feGaussianBlur stdDeviation="5" result="blur" />
+              <feGaussianBlur stdDeviation="6" result="blur" />
               <feComposite in="SourceGraphic" in2="blur" operator="over" />
             </filter>
           </defs>
@@ -153,11 +162,11 @@ export const TimerDial: React.FC<TimerDialProps> = ({
             cy={center}
             r={radius}
             fill="none"
-            stroke="rgba(255, 255, 255, 0.05)"
+            stroke="rgba(255, 255, 255, 0.06)"
             strokeWidth={strokeWidth}
           />
 
-          {/* Foreground Animated Progress Ring */}
+          {/* Foreground Animated Progress Ring with Smooth Stroke Dashoffset */}
           <circle
             cx={center}
             cy={center}
@@ -175,12 +184,12 @@ export const TimerDial: React.FC<TimerDialProps> = ({
           />
         </svg>
 
-        {/* Inner Content Container */}
+        {/* Inner Content Container - Zero CLS */}
         <div className="absolute inset-0 flex flex-col items-center justify-center z-20 text-center px-4">
           {/* Status Badge */}
           <div className="mb-2">
             <span
-              className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-mono font-medium border ${theme.badgeBg} ${theme.badgeBorder} ${theme.badgeText}`}
+              className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-mono font-medium border ${theme.badgeBg} ${theme.badgeBorder} ${theme.badgeText} shadow-sm`}
             >
               <span
                 className={`w-2 h-2 rounded-full ${
@@ -191,36 +200,38 @@ export const TimerDial: React.FC<TimerDialProps> = ({
             </span>
           </div>
 
-          {/* Tabular Monospace Digits (Zero CLS) */}
+          {/* Tabular Monospace Digits - Zero Layout Shift (CLS = 0.00) */}
           <div 
-            className="text-5xl sm:text-6xl font-mono font-extrabold tracking-tight text-white mb-2 tabular-nums drop-shadow-sm select-none"
+            className="flex items-center justify-center min-w-[7ch] w-full mb-1"
             aria-live="polite"
           >
-            {formattedTime}
+            <span className="timer-digits text-5xl sm:text-6xl font-black text-white tracking-tight tabular-nums select-none drop-shadow-md">
+              {formattedTime}
+            </span>
           </div>
 
           {/* Active Task Tag Badge */}
-          <div className="flex items-center gap-1.5 text-xs font-medium text-slate-300 bg-obsidian-850/80 border border-white/10 px-2.5 py-0.5 rounded-full mb-1">
+          <div className="flex items-center gap-1.5 text-xs font-medium text-slate-300 bg-obsidian-850/90 border border-white/[0.06] px-2.5 py-0.5 rounded-full mb-1 shadow-sm">
             <span
               className="w-1.5 h-1.5 rounded-full"
               style={{ backgroundColor: activeTagColor }}
             />
-            <span className="truncate max-w-[120px]">{activeTagLabel}</span>
+            <span className="truncate max-w-[130px] font-sans">{activeTagLabel}</span>
           </div>
 
           {/* Progress Percentage */}
           <span className="text-[11px] font-mono text-slate-500 tabular-nums">
-            {mode === 'flowmodoro' ? 'Counting up' : `${Math.round(progressRatio * 100)}% elapsed`}
+            {mode === 'flowmodoro' ? 'Stopwatch active' : `${Math.round(progressRatio * 100)}% elapsed`}
           </span>
         </div>
       </div>
 
-      {/* Tactile Control Buttons Row */}
+      {/* Tactile Control Buttons Row - Smooth Micro-Interactions (active:scale-[0.98]) */}
       <div className="flex flex-wrap items-center justify-center gap-3 mt-7">
         {/* Primary Play/Pause Button */}
         <button
           onClick={isRunning ? pause : start}
-          className={`flex items-center justify-center gap-2 px-7 h-12 rounded-2xl font-semibold text-sm transition-all duration-200 active:scale-95 min-w-[130px] shadow-lg ${
+          className={`btn-tactile flex items-center justify-center gap-2 px-7 h-12 rounded-2xl font-semibold text-sm transition-all duration-180 active:scale-[0.98] min-w-[130px] shadow-lg ${
             isRunning
               ? 'bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 shadow-amber-500/10'
               : 'bg-indigo-600 hover:bg-indigo-500 text-white shadow-indigo-600/30 border border-indigo-400/40'
@@ -244,7 +255,7 @@ export const TimerDial: React.FC<TimerDialProps> = ({
         <button
           onClick={reset}
           title="Reset Timer"
-          className="flex items-center justify-center gap-1.5 px-4 h-12 rounded-2xl bg-obsidian-850 hover:bg-obsidian-800 border border-white/10 text-slate-300 hover:text-white transition-all active:scale-95 text-xs font-medium"
+          className="btn-tactile flex items-center justify-center gap-1.5 px-4 h-12 rounded-2xl bg-obsidian-850 hover:bg-obsidian-800 border border-white/[0.06] hover:border-white/20 text-slate-300 hover:text-white transition-all active:scale-[0.98] text-xs font-medium shadow-sm"
         >
           <RotateCcw className="w-4 h-4" />
           <span>Reset</span>
@@ -255,7 +266,7 @@ export const TimerDial: React.FC<TimerDialProps> = ({
           <button
             onClick={extendFiveMinutes}
             title="Add 5 Minutes to Session"
-            className="flex items-center justify-center gap-1.5 px-4 h-12 rounded-2xl bg-obsidian-850 hover:bg-obsidian-800 border border-white/10 text-indigo-300 hover:text-indigo-200 transition-all active:scale-95 text-xs font-medium"
+            className="btn-tactile flex items-center justify-center gap-1.5 px-4 h-12 rounded-2xl bg-obsidian-850 hover:bg-obsidian-800 border border-white/[0.06] hover:border-indigo-500/40 text-indigo-300 hover:text-indigo-200 transition-all active:scale-[0.98] text-xs font-medium shadow-sm"
           >
             <PlusCircle className="w-4 h-4" />
             <span>+5m</span>
@@ -266,7 +277,7 @@ export const TimerDial: React.FC<TimerDialProps> = ({
         <button
           onClick={skip}
           title="Skip to Next Mode"
-          className="flex items-center justify-center gap-1.5 px-4 h-12 rounded-2xl bg-obsidian-850 hover:bg-obsidian-800 border border-white/10 text-slate-400 hover:text-slate-200 transition-all active:scale-95 text-xs font-medium"
+          className="btn-tactile flex items-center justify-center gap-1.5 px-4 h-12 rounded-2xl bg-obsidian-850 hover:bg-obsidian-800 border border-white/[0.06] hover:border-white/20 text-slate-400 hover:text-slate-200 transition-all active:scale-[0.98] text-xs font-medium shadow-sm"
         >
           <SkipForward className="w-4 h-4" />
           <span>Skip</span>
@@ -277,7 +288,7 @@ export const TimerDial: React.FC<TimerDialProps> = ({
           <button
             onClick={onToggleZenMode}
             title="Enter Zen Fullscreen Mode [F]"
-            className="flex items-center justify-center gap-1.5 px-4 h-12 rounded-2xl bg-obsidian-850 hover:bg-obsidian-800 border border-indigo-500/30 text-indigo-300 hover:text-white transition-all active:scale-95 text-xs font-medium"
+            className="btn-tactile flex items-center justify-center gap-1.5 px-4 h-12 rounded-2xl bg-obsidian-850 hover:bg-obsidian-800 border border-indigo-500/30 text-indigo-300 hover:text-white transition-all active:scale-[0.98] text-xs font-medium shadow-sm"
           >
             <Maximize2 className="w-4 h-4" />
             <span className="hidden sm:inline">Zen Mode</span>
@@ -287,4 +298,3 @@ export const TimerDial: React.FC<TimerDialProps> = ({
     </div>
   );
 };
-

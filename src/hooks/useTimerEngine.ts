@@ -176,6 +176,23 @@ export function useTimerEngine({
     };
   }, []);
 
+  // Guarantee instant re-sync with zero lag whenever the tab regains focus or visibility
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible' && isRunningRef.current) {
+        processTickRef.current(performance.now());
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    window.addEventListener('focus', handleVisibilityChange);
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('focus', handleVisibilityChange);
+    };
+  }, []);
+
   // Controls
   const start = useCallback(() => {
     if (isRunningRef.current) return;

@@ -72,10 +72,10 @@ export const AnalyticsTile: React.FC<AnalyticsTileProps> = ({ analytics }) => {
   };
 
   return (
-    <div className="bg-obsidian-850 border border-white/10 rounded-3xl p-6 shadow-xl relative overflow-hidden flex flex-col justify-between">
+    <div className="bento-card rounded-3xl p-6 shadow-xl relative overflow-hidden flex flex-col justify-between">
       <div>
         {/* Header */}
-        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/5 pb-4 mb-5">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/[0.06] pb-4 mb-5">
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-lg bg-indigo-500/10 border border-indigo-500/30 flex items-center justify-center text-indigo-400">
               <BarChart3 className="w-4 h-4" />
@@ -97,7 +97,7 @@ export const AnalyticsTile: React.FC<AnalyticsTileProps> = ({ analytics }) => {
             <button
               onClick={triggerMilestoneReward}
               title="Trigger Milestone Celebration Confetti"
-              className="p-1.5 rounded-xl bg-obsidian-900 border border-white/10 hover:border-indigo-500/40 text-indigo-300 hover:text-white transition-all active:scale-95"
+              className="btn-tactile p-1.5 rounded-xl bg-obsidian-900 border border-white/[0.06] hover:border-indigo-500/40 text-indigo-300 hover:text-white transition-all active:scale-[0.98]"
             >
               <Sparkles className="w-4 h-4" />
             </button>
@@ -106,7 +106,7 @@ export const AnalyticsTile: React.FC<AnalyticsTileProps> = ({ analytics }) => {
 
         {/* Metric Cards Row */}
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-5">
-          <div className="bg-obsidian-900/90 border border-white/5 rounded-2xl p-3.5">
+          <div className="bg-obsidian-900/90 border border-white/[0.06] rounded-2xl p-3.5">
             <span className="text-[10px] text-slate-500 uppercase font-mono block mb-1 flex items-center gap-1">
               <Clock className="w-3 h-3 text-indigo-400" />
               Total Focus
@@ -117,7 +117,7 @@ export const AnalyticsTile: React.FC<AnalyticsTileProps> = ({ analytics }) => {
             </div>
           </div>
 
-          <div className="bg-obsidian-900/90 border border-white/5 rounded-2xl p-3.5">
+          <div className="bg-obsidian-900/90 border border-white/[0.06] rounded-2xl p-3.5">
             <span className="text-[10px] text-slate-500 uppercase font-mono block mb-1 flex items-center gap-1">
               <Calendar className="w-3 h-3 text-emerald-400" />
               This Week
@@ -128,7 +128,7 @@ export const AnalyticsTile: React.FC<AnalyticsTileProps> = ({ analytics }) => {
             </div>
           </div>
 
-          <div className="col-span-2 sm:col-span-1 bg-obsidian-900/90 border border-white/5 rounded-2xl p-3.5">
+          <div className="col-span-2 sm:col-span-1 bg-obsidian-900/90 border border-white/[0.06] rounded-2xl p-3.5">
             <span className="text-[10px] text-slate-500 uppercase font-mono block mb-1 flex items-center gap-1">
               <Award className="w-3 h-3 text-amber-400" />
               Sessions
@@ -141,7 +141,7 @@ export const AnalyticsTile: React.FC<AnalyticsTileProps> = ({ analytics }) => {
         </div>
 
         {/* GitHub-style Mini Activity Heatmap */}
-        <div className="bg-obsidian-900/80 border border-white/5 rounded-2xl p-4 mb-5">
+        <div className="bg-obsidian-900/80 border border-white/[0.06] rounded-2xl p-4 mb-5">
           <div className="flex items-center justify-between mb-3">
             <span className="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
               <Calendar className="w-3.5 h-3.5 text-slate-400" />
@@ -189,7 +189,7 @@ export const AnalyticsTile: React.FC<AnalyticsTileProps> = ({ analytics }) => {
       </div>
 
       {/* Backup Export / Import Footer */}
-      <div className="border-t border-white/5 pt-4">
+      <div className="border-t border-white/[0.06] pt-4">
         <div className="flex flex-wrap items-center justify-between gap-2.5">
           <span className="text-[11px] font-mono text-slate-400">Data Portability (JSON):</span>
 
@@ -197,7 +197,7 @@ export const AnalyticsTile: React.FC<AnalyticsTileProps> = ({ analytics }) => {
             {/* Export JSON Button */}
             <button
               onClick={downloadBackupFile}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-obsidian-900 hover:bg-obsidian-800 border border-white/10 hover:border-white/20 text-slate-300 hover:text-white text-xs font-mono transition-all active:scale-95"
+              className="btn-tactile inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-obsidian-900 hover:bg-obsidian-800 border border-white/[0.06] hover:border-white/20 text-slate-300 hover:text-white text-xs font-mono transition-all active:scale-[0.98]"
               title="Download JSON session backup"
             >
               <Download className="w-3 h-3" />
@@ -207,7 +207,7 @@ export const AnalyticsTile: React.FC<AnalyticsTileProps> = ({ analytics }) => {
             {/* Import JSON Button */}
             <button
               onClick={() => fileInputRef.current?.click()}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-obsidian-900 hover:bg-obsidian-800 border border-white/10 hover:border-white/20 text-indigo-300 hover:text-indigo-200 text-xs font-mono transition-all active:scale-95"
+              className="btn-tactile inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-obsidian-900 hover:bg-obsidian-800 border border-white/[0.06] hover:border-white/20 text-indigo-300 hover:text-indigo-200 text-xs font-mono transition-all active:scale-[0.98]"
               title="Import and restore sessions from JSON"
             >
               <Upload className="w-3 h-3" />

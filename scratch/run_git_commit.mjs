@@ -31,7 +31,7 @@ async function run() {
     console.log(`   ... and ${stagedFiles.length - 15} more files`);
   }
 
-  console.log('\n📌 3. Creating commit: "feat: complete masterpiece study timer"...');
+  console.log('\n📌 3. Creating commit: "feat: obsidian bento refinements, radial glow accents, zero-CLS tabular figures, and 4-vector QA"...');
   const sha = await git.commit({
     fs,
     dir,
@@ -39,7 +39,7 @@ async function run() {
       name: 'Antigravity Developer',
       email: 'antigravity@gemini.google.com',
     },
-    message: 'feat: complete masterpiece study timer',
+    message: 'feat: obsidian bento refinements, radial glow accents, zero-CLS tabular figures, and 4-vector QA',
   });
 
   console.log(`🎉 Commit created successfully! Commit SHA: ${sha}`);
