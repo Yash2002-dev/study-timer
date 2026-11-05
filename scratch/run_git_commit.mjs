@@ -31,7 +31,7 @@ async function run() {
     console.log(`   ... and ${stagedFiles.length - 15} more files`);
   }
 
-  console.log('\n📌 3. Creating commit: "refactor: dedicated web worker and high-accuracy delta timing engine (zero drift)"...');
+  console.log('\n📌 3. Creating commit: "feat: ambient sound synthesis module (pink noise, binaural, rain) & bento mixer panel"...');
   const sha = await git.commit({
     fs,
     dir,
@@ -39,7 +39,7 @@ async function run() {
       name: 'Antigravity Developer',
       email: 'antigravity@gemini.google.com',
     },
-    message: 'refactor: dedicated web worker and high-accuracy delta timing engine (zero drift)',
+    message: 'feat: ambient sound synthesis module (pink noise, binaural, rain) & bento mixer panel',
   });
 
   console.log(`🎉 Commit created successfully! Commit SHA: ${sha}`);
