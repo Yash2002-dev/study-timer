@@ -271,17 +271,17 @@ export default function App() {
             <span><kbd className="px-1.5 py-0.5 rounded bg-obsidian-850 border border-white/[0.06] text-slate-300">Esc</kbd> Exit Zen</span>
           </div>
         </footer>
-
-        {/* Global Fullscreen Zen Mode Overlay */}
-        <ZenOverlay
-          isOpen={isZenModeOpen}
-          onClose={() => setIsZenModeOpen(false)}
-          timer={timer}
-          soundscape={soundscape}
-          activeTagLabel={activeTag.label}
-          activeTagColor={activeTag.color}
-        />
       </div>
+
+      {/* Global Fullscreen Zen Mode Overlay - Placed outside the fading bento container */}
+      <ZenOverlay
+        isOpen={isZenModeOpen}
+        onClose={() => setIsZenModeOpen(false)}
+        timer={timer}
+        soundscape={soundscape}
+        activeTagLabel={activeTag.label}
+        activeTagColor={activeTag.color}
+      />
     </div>
   );
 }
