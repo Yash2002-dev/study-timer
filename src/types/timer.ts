@@ -10,11 +10,15 @@ export interface TimerConfig {
 export interface TimerWorkerMessage {
   type: 'START' | 'PAUSE' | 'RESET' | 'SYNC' | 'SET_INTERVAL';
   intervalMs?: number;
+  startTimePerf?: number;
+  startTimeDate?: number;
 }
 
 export interface TimerWorkerResponse {
-  type: 'TICK';
-  timestamp: number;
+  type: 'TICK' | 'SYNC_ACK';
+  timestamp: number;        // performance.now() high-accuracy monotonic timestamp
+  dateTimestamp?: number;   // Date.now() epoch timestamp
+  workerElapsedMs?: number; // Worker-calculated elapsed milliseconds
 }
 
 export interface TimerEngineState {

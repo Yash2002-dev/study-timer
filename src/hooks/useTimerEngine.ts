@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { TimerMode, TimerConfig, TimerEngine } from '../types/timer';
+import { TimerMode, TimerConfig, TimerEngine, TimerWorkerResponse } from '../types/timer';
 import { playCompletionChime } from '../audio/chime';
 import { formatTime } from '../utils/formatTime';
 
@@ -29,11 +29,13 @@ export function useTimerEngine({
   const [completedSessions, setCompletedSessions] = useState<number>(0);
   const [extensionSeconds, setExtensionSeconds] = useState<number>(0);
 
-  // References to guarantee drift-free delta calculation and avoid stale closures
+  // High-accuracy delta timestamp anchors (guarantees zero drift across background tab sleep)
   const workerRef = useRef<Worker | null>(null);
   const fallbackIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const lastTimestampRef = useRef<number>(0);
+  const sessionStartPerfRef = useRef<number>(0);
+  const sessionStartDateRef = useRef<number>(0);
   const accumulatedMsRef = useRef<number>(0);
+
   const isRunningRef = useRef<boolean>(false);
   const modeRef = useRef<TimerMode>(initialMode);
   const configRef = useRef<TimerConfig>({ ...DEFAULT_CONFIG, ...initialConfig });
@@ -41,7 +43,7 @@ export function useTimerEngine({
   const onSessionCompleteRef = useRef(onSessionComplete);
   const enableChimeRef = useRef(enableChime);
 
-  // Always keep refs up to date
+  // Synchronize mutable refs on every render
   isRunningRef.current = isRunning;
   modeRef.current = mode;
   configRef.current = config;
@@ -74,53 +76,74 @@ export function useTimerEngine({
   const [progressRatio, setProgressRatio] = useState<number>(0);
   const [elapsedTime, setElapsedTime] = useState<number>(0);
 
-  // Update document title with remaining time and status
+  // Keep document title updated with live status
   useEffect(() => {
     const formatted = formatTime(timeLeft);
-    const modeLabel = mode === 'pomodoro' ? 'Focus' : mode === 'shortBreak' ? 'Short Break' : mode === 'longBreak' ? 'Long Break' : mode === 'flowmodoro' ? 'Flow' : 'Custom';
+    const modeLabel =
+      mode === 'pomodoro'
+        ? 'Focus'
+        : mode === 'shortBreak'
+        ? 'Short Break'
+        : mode === 'longBreak'
+        ? 'Long Break'
+        : mode === 'flowmodoro'
+        ? 'Flow'
+        : 'Custom';
     const stateSymbol = isRunning ? '▶' : '⏸';
     document.title = `${stateSymbol} ${formatted} • ${modeLabel} | Masterpiece Study Timer`;
   }, [timeLeft, mode, isRunning]);
 
-  // Core tick processor
-  const processTick = useCallback((now: number) => {
+  /**
+   * Core High-Accuracy Delta Processor
+   * Calculates true elapsed time using dual monotonic performance.now() and Date.now() anchors.
+   * Completely immune to timer throttling or background suspension.
+   */
+  const processTick = useCallback((perfNow: number, dateNow: number = Date.now()) => {
     if (!isRunningRef.current) return;
 
-    if (lastTimestampRef.current === 0) {
-      lastTimestampRef.current = now;
+    if (sessionStartPerfRef.current === 0) {
+      sessionStartPerfRef.current = perfNow;
+      sessionStartDateRef.current = dateNow;
       return;
     }
 
-    const deltaMs = Math.max(0, now - lastTimestampRef.current);
-    lastTimestampRef.current = now;
-    accumulatedMsRef.current += deltaMs;
+    // High-precision delta calculation: combines monotonic performance.now() and epoch Date.now()
+    const perfDelta = Math.max(0, perfNow - sessionStartPerfRef.current);
+    const dateDelta = Math.max(0, dateNow - sessionStartDateRef.current);
+    const currentSegmentDeltaMs = Math.max(perfDelta, dateDelta);
+
+    const totalElapsedMs = accumulatedMsRef.current + currentSegmentDeltaMs;
+    const totalElapsedSecs = Math.floor(totalElapsedMs / 1000);
+
+    setElapsedTime(totalElapsedSecs);
 
     const currentMode = modeRef.current;
     const currentConfig = configRef.current;
     const currentExtensions = extensionSecondsRef.current;
     const currentBase = currentMode === 'flowmodoro' ? 0 : (currentConfig[currentMode as keyof TimerConfig] || 1500);
-    const currentTotal = currentBase + currentExtensions;
-    const totalElapsedSecs = Math.floor(accumulatedMsRef.current / 1000);
-
-    setElapsedTime(totalElapsedSecs);
+    const currentTotalSecs = currentBase + currentExtensions;
 
     if (currentMode === 'flowmodoro') {
       // Stopwatch mode: count upwards
       setTimeLeft(totalElapsedSecs);
       setProgressRatio(Math.min(1, (totalElapsedSecs % 3600) / 3600));
     } else {
-      // Countdown modes
-      const remainingSecs = Math.max(0, currentTotal - totalElapsedSecs);
+      // Countdown modes: pomodoro, breaks, custom
+      const remainingSecs = Math.max(0, currentTotalSecs - totalElapsedSecs);
       setTimeLeft(remainingSecs);
 
-      const ratio = currentTotal > 0 ? Math.min(1, Math.max(0, (currentTotal - remainingSecs) / currentTotal)) : 1;
+      const ratio = currentTotalSecs > 0
+        ? Math.min(1, Math.max(0, totalElapsedMs / (currentTotalSecs * 1000)))
+        : 1;
       setProgressRatio(ratio);
 
-      // Check for completion
-      if (remainingSecs <= 0 && accumulatedMsRef.current >= currentTotal * 1000) {
+      // Session completion boundary check
+      if (remainingSecs <= 0 && totalElapsedMs >= currentTotalSecs * 1000) {
         setIsRunning(false);
         isRunningRef.current = false;
-        lastTimestampRef.current = 0;
+        sessionStartPerfRef.current = 0;
+        sessionStartDateRef.current = 0;
+        accumulatedMsRef.current = 0;
 
         if (workerRef.current) {
           workerRef.current.postMessage({ type: 'PAUSE' });
@@ -136,7 +159,7 @@ export function useTimerEngine({
 
         setCompletedSessions((prev) => prev + 1);
         if (onSessionCompleteRef.current) {
-          onSessionCompleteRef.current(currentMode, currentTotal);
+          onSessionCompleteRef.current(currentMode, currentTotalSecs);
         }
       }
     }
@@ -145,7 +168,7 @@ export function useTimerEngine({
   const processTickRef = useRef(processTick);
   processTickRef.current = processTick;
 
-  // Initialize Web Worker once on mount
+  // Initialize Dedicated Web Worker on mount
   useEffect(() => {
     let worker: Worker | null = null;
 
@@ -154,15 +177,15 @@ export function useTimerEngine({
         type: 'module',
       });
 
-      worker.onmessage = (event: MessageEvent) => {
+      worker.onmessage = (event: MessageEvent<TimerWorkerResponse>) => {
         if (event.data?.type === 'TICK') {
-          processTickRef.current(performance.now());
+          processTickRef.current(event.data.timestamp, event.data.dateTimestamp || Date.now());
         }
       };
 
       workerRef.current = worker;
     } catch (err) {
-      console.warn('Worker initialization failed, fallback will be used on start:', err);
+      console.warn('Dedicated Web Worker initialization failed; delta fallback will be used:', err);
     }
 
     return () => {
@@ -176,20 +199,23 @@ export function useTimerEngine({
     };
   }, []);
 
-  // Guarantee instant re-sync with zero lag whenever the tab regains focus or visibility
+  // Background tab visibility & window focus re-synchronization
   useEffect(() => {
-    const handleVisibilityChange = () => {
-      if (document.visibilityState === 'visible' && isRunningRef.current) {
-        processTickRef.current(performance.now());
+    const handleImmediateResync = () => {
+      if (isRunningRef.current) {
+        processTickRef.current(performance.now(), Date.now());
+        if (workerRef.current) {
+          workerRef.current.postMessage({ type: 'SYNC' });
+        }
       }
     };
 
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-    window.addEventListener('focus', handleVisibilityChange);
+    document.addEventListener('visibilitychange', handleImmediateResync);
+    window.addEventListener('focus', handleImmediateResync);
 
     return () => {
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
-      window.removeEventListener('focus', handleVisibilityChange);
+      document.removeEventListener('visibilitychange', handleImmediateResync);
+      window.removeEventListener('focus', handleImmediateResync);
     };
   }, []);
 
@@ -197,16 +223,25 @@ export function useTimerEngine({
   const start = useCallback(() => {
     if (isRunningRef.current) return;
 
-    lastTimestampRef.current = performance.now();
+    const nowPerf = performance.now();
+    const nowDate = Date.now();
+    sessionStartPerfRef.current = nowPerf;
+    sessionStartDateRef.current = nowDate;
+
     setIsRunning(true);
     isRunningRef.current = true;
 
     if (workerRef.current) {
-      workerRef.current.postMessage({ type: 'START', intervalMs: 100 });
+      workerRef.current.postMessage({
+        type: 'START',
+        intervalMs: 100,
+        startTimePerf: nowPerf,
+        startTimeDate: nowDate,
+      });
     } else {
       if (fallbackIntervalRef.current) clearInterval(fallbackIntervalRef.current);
       fallbackIntervalRef.current = setInterval(() => {
-        processTickRef.current(performance.now());
+        processTickRef.current(performance.now(), Date.now());
       }, 100);
     }
   }, []);
@@ -214,9 +249,17 @@ export function useTimerEngine({
   const pause = useCallback(() => {
     if (!isRunningRef.current) return;
 
+    // Freeze and commit current segment elapsed duration to accumulatedMs
+    const nowPerf = performance.now();
+    const nowDate = Date.now();
+    const perfDelta = Math.max(0, nowPerf - sessionStartPerfRef.current);
+    const dateDelta = Math.max(0, nowDate - sessionStartDateRef.current);
+    accumulatedMsRef.current += Math.max(perfDelta, dateDelta);
+
+    sessionStartPerfRef.current = 0;
+    sessionStartDateRef.current = 0;
     setIsRunning(false);
     isRunningRef.current = false;
-    lastTimestampRef.current = 0;
 
     if (workerRef.current) {
       workerRef.current.postMessage({ type: 'PAUSE' });
@@ -230,7 +273,8 @@ export function useTimerEngine({
   const reset = useCallback(() => {
     setIsRunning(false);
     isRunningRef.current = false;
-    lastTimestampRef.current = 0;
+    sessionStartPerfRef.current = 0;
+    sessionStartDateRef.current = 0;
     accumulatedMsRef.current = 0;
     setExtensionSeconds(0);
     extensionSecondsRef.current = 0;
@@ -270,7 +314,8 @@ export function useTimerEngine({
 
     setIsRunning(false);
     isRunningRef.current = false;
-    lastTimestampRef.current = 0;
+    sessionStartPerfRef.current = 0;
+    sessionStartDateRef.current = 0;
     accumulatedMsRef.current = 0;
     setExtensionSeconds(0);
     extensionSecondsRef.current = 0;
