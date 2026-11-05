@@ -226,9 +226,13 @@ export function useStudyAnalytics(): StudyAnalyticsHook {
       setSessions((prev) => {
         const updated = [...prev, sessionObj];
 
-        // Milestone reward check: Trigger confetti celebration on every 4th focus session completed
+        // Milestone reward check: Trigger grand confetti celebration on 4-session streak milestone
+        const todaySessions = updated.filter(
+          (s) => s.date === sessionObj.date && s.mode !== 'shortBreak' && s.mode !== 'longBreak'
+        );
         const focusSessions = updated.filter((s) => s.mode !== 'shortBreak' && s.mode !== 'longBreak');
-        if (focusSessions.length > 0 && focusSessions.length % 4 === 0) {
+
+        if (todaySessions.length === 4 || (focusSessions.length > 0 && focusSessions.length % 4 === 0)) {
           triggerMilestoneConfetti();
         } else {
           triggerSessionCompleteConfetti();

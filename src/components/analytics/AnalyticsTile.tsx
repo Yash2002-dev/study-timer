@@ -88,7 +88,17 @@ export const AnalyticsTile: React.FC<AnalyticsTileProps> = ({ analytics }) => {
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
+            {/* 4-Session Streak Milestone Pill */}
+            <div className="flex items-center gap-1.5 text-xs font-mono bg-indigo-500/10 border border-indigo-500/30 text-indigo-300 px-2.5 py-1 rounded-xl shadow-sm">
+              <Award className="w-3.5 h-3.5 text-indigo-400" />
+              <span className="font-bold tabular-nums">
+                {analytics.completedTodayCount >= 4 
+                  ? '🎉 4-Streak Milestone!' 
+                  : `${analytics.completedTodayCount % 4}/4 Streak Goal`}
+              </span>
+            </div>
+
             <div className="flex items-center gap-1.5 text-xs font-mono bg-amber-500/10 border border-amber-500/30 text-amber-300 px-2.5 py-1 rounded-xl shadow-sm">
               <Flame className="w-3.5 h-3.5 fill-current text-amber-400" />
               <span className="font-bold tabular-nums">{streakDays} Day Streak</span>
