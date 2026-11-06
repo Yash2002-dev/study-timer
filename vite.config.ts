@@ -19,9 +19,9 @@ export default defineConfig({
       manifest: {
         name: 'Masterpiece Study Timer',
         short_name: 'StudyTimer',
-        description: 'Tactile obsidian bento study timer with drift-free delta timing, procedural Web Audio soundscapes, and productivity analytics.',
-        theme_color: '#0A0A0C',
-        background_color: '#0A0A0C',
+        description: 'A calm, minimal, clinical boutique study timer with drift-free delta timing, procedural Web Audio soundscapes, and productivity analytics.',
+        theme_color: '#F2F0E9',
+        background_color: '#F2F0E9',
         display: 'standalone',
         orientation: 'portrait-primary',
         scope: '/',
