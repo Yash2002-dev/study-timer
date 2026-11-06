@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bgGradMask" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#12131A" />
+      <stop offset="50%" stop-color="#0A0A0C" />
+      <stop offset="100%" stop-color="#060709" />
+    </linearGradient>
+
+    <linearGradient id="timerGradMask" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#818CF8" />
+      <stop offset="50%" stop-color="#6366F1" />
+      <stop offset="100%" stop-color="#06B6D4" />
+    </linearGradient>
+
+    <linearGradient id="pivotGradMask" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#A5B4FC" />
+      <stop offset="100%" stop-color="#6366F1" />
+    </linearGradient>
+
+    <filter id="neonGlowMask" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="12" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Full Bleed Background for Maskable Icons -->
+  <rect width="512" height="512" fill="url(#bgGradMask)" />
+
+  <!-- Safe Area Scaled Graphic (Scale 0.75 centered at 256,256) -->
+  <g transform="translate(64, 64) scale(0.75)">
+    <!-- Outer Ambient Glow Bloom -->
+    <circle cx="256" cy="256" r="180" fill="none" stroke="#6366F1" stroke-width="14" opacity="0.15" filter="url(#neonGlowMask)" />
+
+    <!-- Background Track Ring -->
+    <circle cx="256" cy="256" r="150" fill="none" stroke="rgba(255, 255, 255, 0.08)" stroke-width="26" stroke-linecap="round" />
+
+    <!-- Active Neon Progress Ring -->
+    <circle
+      cx="256"
+      cy="256"
+      r="150"
+      fill="none"
+      stroke="url(#timerGradMask)"
+      stroke-width="26"
+      stroke-linecap="round"
+      stroke-dasharray="942.48"
+      stroke-dashoffset="235.62"
+      transform="rotate(-90 256 256)"
+      filter="url(#neonGlowMask)"
+    />
+
+    <!-- Inner Concentric Bezel -->
+    <circle cx="256" cy="256" r="110" fill="#0D0E14" stroke="rgba(255, 255, 255, 0.06)" stroke-width="4" />
+
+    <!-- Clock Hands -->
+    <line x1="256" y1="256" x2="204" y2="194" stroke="#CBD5E1" stroke-width="12" stroke-linecap="round" />
+    <line x1="256" y1="256" x2="256" y2="162" stroke="#FFFFFF" stroke-width="9" stroke-linecap="round" />
+    <line x1="256" y1="256" x2="318" y2="208" stroke="#06B6D4" stroke-width="5" stroke-linecap="round" />
+
+    <!-- Center Pivot Core -->
+    <circle cx="256" cy="256" r="18" fill="url(#pivotGradMask)" filter="url(#neonGlowMask)" />
+    <circle cx="256" cy="256" r="7" fill="#FFFFFF" />
+  </g>
+</svg>

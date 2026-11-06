@@ -31,7 +31,7 @@ async function run() {
     console.log(`   ... and ${stagedFiles.length - 15} more files`);
   }
 
-  console.log('\n📌 3. Creating commit: "feat: productivity tracking, github heatmap, daily streak, & 4-session confetti milestone"...');
+  console.log('\n📌 3. Creating commit: "feat: fully offline-capable progressive web app (PWA) with vite-plugin-pwa, icons, and service worker"...');
   const sha = await git.commit({
     fs,
     dir,
@@ -39,7 +39,7 @@ async function run() {
       name: 'Antigravity Developer',
       email: 'antigravity@gemini.google.com',
     },
-    message: 'feat: productivity tracking, github heatmap, daily streak, & 4-session confetti milestone',
+    message: 'feat: fully offline-capable progressive web app (PWA) with vite-plugin-pwa, icons, and service worker',
   });
 
   console.log(`🎉 Commit created successfully! Commit SHA: ${sha}`);
