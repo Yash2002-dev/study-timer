@@ -331,3 +331,4 @@ verifyPWA().catch((err) => {
   console.error('❌ PWA verification failed:', err);
   process.exit(1);
 });
+

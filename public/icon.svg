@@ -85,3 +85,4 @@
   <circle cx="256" cy="256" r="16" fill="url(#pivotGrad)" filter="url(#neonGlow)" />
   <circle cx="256" cy="256" r="6" fill="#FFFFFF" />
 </svg>
+
