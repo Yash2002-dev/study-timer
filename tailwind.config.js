@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 export default {
+  darkMode: 'class',
   content: [
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
@@ -7,6 +8,15 @@ export default {
   theme: {
     extend: {
       colors: {
+        obsidian: {
+          950: '#070709',
+          900: '#0D0D11', // Dark background
+          850: '#121217', // Dark inner surface / input
+          800: '#16161D', // Dark card
+          750: '#1E1E26',
+          700: '#23232C', // Dark pill button
+          600: '#2F2F3B',
+        },
         cream: {
           50: '#FAF9F5',
           100: '#F2F0E9', // Global background

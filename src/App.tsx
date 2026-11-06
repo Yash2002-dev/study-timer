@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useTimerEngine } from './hooks/useTimerEngine';
 import { useSoundscape } from './hooks/useSoundscape';
 import { useStudyAnalytics } from './hooks/useStudyAnalytics';
+import { useTheme } from './hooks/useTheme';
 import { TimerDial } from './components/timer/TimerDial';
 import { SoundscapeMixer } from './components/audio/SoundscapeMixer';
 import { TaskMatrixTile, PRESET_TAGS } from './components/tasks/TaskMatrixTile';
@@ -17,7 +18,9 @@ import {
   VolumeX, 
   Settings2,
   CheckCircle2,
-  Keyboard
+  Keyboard,
+  Sun,
+  Moon
 } from 'lucide-react';
 
 export default function App() {
@@ -26,6 +29,9 @@ export default function App() {
   const [isZenModeOpen, setIsZenModeOpen] = useState<boolean>(false);
   const [customInput, setCustomInput] = useState<number>(45);
   const [lastNotification, setLastNotification] = useState<string>('');
+
+  const { resolvedTheme, toggleTheme } = useTheme();
+  const isDark = resolvedTheme === 'dark';
 
   const analytics = useStudyAnalytics();
 
@@ -92,54 +98,76 @@ export default function App() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#F2F0E9] text-[#1A1A1A] flex flex-col items-center justify-start p-4 sm:p-6 lg:p-8 font-sans selection:bg-[#2E4036]/15 selection:text-[#1A1A1A] overflow-x-hidden">
+    <div className="min-h-screen bg-[#F2F0E9] dark:bg-[#0D0D11] text-[#1A1A1A] dark:text-[#EDEDED] flex flex-col items-center justify-start p-4 sm:p-6 lg:p-8 font-sans selection:bg-[#2E4036]/15 dark:selection:bg-emerald-500/20 selection:text-[#1A1A1A] dark:selection:text-[#EDEDED] overflow-x-hidden transition-colors duration-300">
       <div className={`w-full max-w-7xl space-y-6 transition-all duration-400 ease-[cubic-bezier(0.25,0.46,0.45,0.94)] ${isZenModeOpen ? 'opacity-0 pointer-events-none scale-[0.99]' : 'opacity-100 scale-100'}`}>
-        {/* Top Organic Navigation Header - Flat, Zero Borders, Plus Jakarta Sans */}
-        <header className="organic-card p-4 sm:p-5 flex flex-wrap items-center justify-between gap-4">
+        {/* Top Navigation Header - Adaptive Light / Dark */}
+        <header className="organic-card p-4 sm:p-5 flex flex-wrap items-center justify-between gap-4 transition-colors duration-300">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-[#E2ECE5] flex items-center justify-center text-[#2E4036] shrink-0">
+            <div className="w-10 h-10 rounded-2xl bg-[#E2ECE5] dark:bg-emerald-500/10 dark:border dark:border-emerald-500/20 flex items-center justify-center text-[#2E4036] dark:text-emerald-400 shrink-0 transition-colors duration-300">
               <Clock className="w-5 h-5" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h1 className="text-base sm:text-lg font-bold tracking-tight text-[#1A1A1A]">
+                <h1 className="text-base sm:text-lg font-bold tracking-tight text-[#1A1A1A] dark:text-[#EDEDED] transition-colors duration-300">
                   Masterpiece Study Timer
                 </h1>
-                <span className="hidden sm:inline-block text-[10px] px-2.5 py-0.5 rounded-full bg-[#EAE6DC] text-[#5F5E58] font-mono tracking-wide">
-                  Precision v5.2
+                <span className="hidden sm:inline-block text-[10px] px-2.5 py-0.5 rounded-full bg-[#EAE6DC] dark:bg-[#23232C] text-[#5F5E58] dark:text-[#A1A1AA] dark:border dark:border-white/[0.08] font-mono tracking-wide transition-colors duration-300">
+                  Precision v5.5
                 </span>
               </div>
-              <p className="text-xs text-[#5F5E58]">Clinical Boutique Productivity Hub • High-Accuracy Digital Instrument</p>
+              <p className="text-xs text-[#5F5E58] dark:text-[#A1A1AA] transition-colors duration-300">
+                {isDark ? 'Obsidian Noir Focus Station' : 'Clinical Boutique Productivity Hub'} • Drift-Free Precision Engine
+              </p>
             </div>
           </div>
 
           {/* Quick Header Utility Actions */}
-          <div className="flex items-center gap-2.5 sm:gap-3">
+          <div className="flex items-center gap-2 sm:gap-2.5">
             {/* Quick Streak Badge */}
-            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#EAE6DC] text-xs font-mono text-[#1A1A1A]">
-              <Flame className="w-3.5 h-3.5 text-[#8C5A41] fill-current" />
+            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#EAE6DC] dark:bg-[#23232C] dark:border dark:border-white/[0.08] text-xs font-mono text-[#1A1A1A] dark:text-[#EDEDED] transition-colors duration-300">
+              <Flame className="w-3.5 h-3.5 text-[#8C5A41] dark:text-amber-400 fill-current" />
               <span className="font-semibold tabular-nums">{analytics.streakDays}d Streak</span>
             </div>
+
+            {/* Seamless Light/Dark Theme Toggle Button */}
+            <button
+              onClick={toggleTheme}
+              aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+              title={isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+              className="btn-precision flex items-center justify-center p-2 sm:px-3 sm:py-2 rounded-xl bg-[#EAE6DC] hover:bg-[#DDD8CB] dark:bg-[#23232C] dark:hover:bg-[#2C2C38] dark:border dark:border-white/[0.08] text-[#1A1A1A] dark:text-[#EDEDED] text-xs font-mono transition-colors duration-300"
+            >
+              {isDark ? (
+                <>
+                  <Sun className="w-4 h-4 text-amber-400" />
+                  <span className="hidden md:inline ml-1.5">Light</span>
+                </>
+              ) : (
+                <>
+                  <Moon className="w-4 h-4 text-[#2E4036]" />
+                  <span className="hidden md:inline ml-1.5">Dark</span>
+                </>
+              )}
+            </button>
 
             {/* Zen Mode Button */}
             <button
               onClick={() => setIsZenModeOpen(true)}
               aria-label="Enter fullscreen Zen focus mode [F]"
-              className="btn-precision flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-[#EAE6DC] hover:bg-[#DDD8CB] text-[#1A1A1A] text-xs font-mono"
+              className="btn-precision flex items-center gap-1.5 px-3 py-2 rounded-xl bg-[#EAE6DC] hover:bg-[#DDD8CB] dark:bg-[#23232C] dark:hover:bg-[#2C2C38] dark:border dark:border-white/[0.08] text-[#1A1A1A] dark:text-[#EDEDED] text-xs font-mono transition-colors duration-300"
               title="Fullscreen Zen Mode [F]"
             >
-              <Maximize2 className="w-3.5 h-3.5 text-[#2E4036]" />
-              <span>Zen Mode [F]</span>
+              <Maximize2 className="w-3.5 h-3.5 text-[#2E4036] dark:text-emerald-400" />
+              <span className="hidden sm:inline">Zen [F]</span>
             </button>
 
             {/* Sound Mute Button */}
             <button
               onClick={soundscape.toggleMute}
               aria-label={soundscape.isMuted ? 'Unmute ambient sound [M]' : 'Mute ambient sound [M]'}
-              className={`btn-precision flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-mono ${
+              className={`btn-precision flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-mono transition-colors duration-300 ${
                 soundscape.isMuted
-                  ? 'bg-[#F4ECE7] text-[#8C5A41]'
-                  : 'bg-[#EAE6DC] text-[#1A1A1A] hover:bg-[#DDD8CB]'
+                  ? 'bg-[#F4ECE7] dark:bg-rose-500/15 dark:border dark:border-rose-500/30 text-[#8C5A41] dark:text-rose-300'
+                  : 'bg-[#EAE6DC] text-[#1A1A1A] hover:bg-[#DDD8CB] dark:bg-[#23232C] dark:text-[#EDEDED] dark:hover:bg-[#2C2C38] dark:border dark:border-white/[0.08]'
               }`}
               title="Mute Ambient Sound [M]"
             >
@@ -149,10 +177,10 @@ export default function App() {
           </div>
         </header>
 
-        {/* 12-Column Organic Bento Grid - Zero Borders, Generous Whitespace */}
+        {/* 12-Column Responsive Bento Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
           {/* Bento Tile 1: Hero Precision Timer Dial (Col Span 7 on Desktop) */}
-          <section className="lg:col-span-7 organic-card p-6 sm:p-8 relative flex flex-col justify-between">
+          <section className="lg:col-span-7 organic-card p-6 sm:p-8 relative flex flex-col justify-between transition-colors duration-300">
             <div>
               {/* Mode Selector Pill Buttons with Magnetic Hover */}
               <nav aria-label="Interval Modes" className="grid grid-cols-2 sm:grid-cols-5 gap-2 mb-6 relative z-10">
@@ -164,14 +192,16 @@ export default function App() {
                       onClick={() => setMode(m.id)}
                       aria-pressed={isActive}
                       aria-label={`Select ${m.label} mode, duration ${m.sub}`}
-                      className={`btn-precision flex flex-col items-center justify-center py-2 px-2.5 rounded-2xl text-center ${
+                      className={`btn-precision flex flex-col items-center justify-center py-2 px-2.5 rounded-2xl text-center transition-colors duration-300 ${
                         isActive
-                          ? 'bg-[#2E4036] text-[#FAF9F5] shadow-sm'
-                          : 'bg-[#EAE6DC] hover:bg-[#DDD8CB] text-[#5F5E58] hover:text-[#1A1A1A]'
+                          ? isDark
+                            ? 'bg-emerald-500 text-[#09090C] font-semibold shadow-md shadow-emerald-500/20'
+                            : 'bg-[#2E4036] text-[#FAF9F5] shadow-sm'
+                          : 'bg-[#EAE6DC] hover:bg-[#DDD8CB] text-[#5F5E58] hover:text-[#1A1A1A] dark:bg-[#23232C] dark:hover:bg-[#2C2C38] dark:text-[#A1A1AA] dark:hover:text-[#EDEDED] dark:border dark:border-white/[0.08]'
                       }`}
                     >
                       <span className="text-xs font-semibold">{m.label}</span>
-                      <span className={`text-[10px] font-mono mt-0.5 ${isActive ? 'text-[#FAF9F5]/80' : 'text-[#7A7972]'}`}>
+                      <span className={`text-[10px] font-mono mt-0.5 ${isActive ? isDark ? 'text-[#09090C]/80' : 'text-[#FAF9F5]/80' : 'text-[#7A7972] dark:text-[#71717A]'}`}>
                         {m.sub}
                       </span>
                     </button>
@@ -181,9 +211,9 @@ export default function App() {
 
               {/* Custom Interval Configuration Input */}
               {mode === 'custom' && (
-                <div className="mb-6 p-3 rounded-2xl bg-[#F2EFE9] flex items-center justify-between text-xs relative z-10">
-                  <span className="text-[#5F5E58] flex items-center gap-1.5 font-medium">
-                    <Settings2 className="w-4 h-4 text-[#2E4036]" />
+                <div className="mb-6 p-3 rounded-2xl bg-[#F2EFE9] dark:bg-[#121217] dark:border dark:border-white/[0.08] flex items-center justify-between text-xs relative z-10 transition-colors duration-300">
+                  <span className="text-[#5F5E58] dark:text-[#A1A1AA] flex items-center gap-1.5 font-medium">
+                    <Settings2 className="w-4 h-4 text-[#2E4036] dark:text-emerald-400" />
                     Configure Custom Duration:
                   </span>
                   <div className="flex items-center gap-2">
@@ -198,9 +228,9 @@ export default function App() {
                         setCustomMinutes(val);
                       }}
                       aria-label="Custom duration in minutes"
-                      className="w-16 bg-[#FAF9F5] rounded-lg px-2 py-1 text-center font-mono text-[#1A1A1A] tabular-nums"
+                      className="w-16 bg-[#FAF9F5] dark:bg-[#1E1E26] text-[#1A1A1A] dark:text-[#EDEDED] rounded-lg px-2 py-1 text-center font-mono tabular-nums dark:border dark:border-white/[0.1] focus:outline-none"
                     />
-                    <span className="text-[#7A7972] font-mono">mins</span>
+                    <span className="text-[#7A7972] dark:text-[#71717A] font-mono">mins</span>
                   </div>
                 </div>
               )}
@@ -219,8 +249,11 @@ export default function App() {
 
             {/* Notification Ribbon */}
             {lastNotification && (
-              <div className="mt-4 p-3 rounded-2xl bg-[#E2ECE5] text-[#2E4036] text-xs font-mono flex items-center gap-2" role="status">
-                <CheckCircle2 className="w-4 h-4 text-[#2E4036] shrink-0" />
+              <div 
+                className="mt-4 p-3 rounded-2xl bg-[#E2ECE5] dark:bg-emerald-500/15 dark:border dark:border-emerald-500/30 text-[#2E4036] dark:text-emerald-300 text-xs font-mono flex items-center gap-2 transition-colors duration-300" 
+                role="status"
+              >
+                <CheckCircle2 className="w-4 h-4 text-[#2E4036] dark:text-emerald-400 shrink-0" />
                 <span className="truncate">{lastNotification}</span>
               </div>
             )}
@@ -249,25 +282,25 @@ export default function App() {
           </section>
         </div>
 
-        {/* Global Keyboard Shortcut Bar - Flat, Zero Borders, Plus Jakarta Sans & IBM Plex Mono */}
-        <footer className="organic-card p-3.5 flex flex-wrap items-center justify-between gap-3 text-[11px] font-mono text-[#5F5E58]">
-          <div className="flex items-center gap-1.5 text-[#1A1A1A] font-sans">
-            <Keyboard className="w-3.5 h-3.5 text-[#2E4036]" />
+        {/* Global Keyboard Shortcut Bar - Adaptive Light / Dark */}
+        <footer className="organic-card p-3.5 flex flex-wrap items-center justify-between gap-3 text-[11px] font-mono text-[#5F5E58] dark:text-[#A1A1AA] transition-colors duration-300">
+          <div className="flex items-center gap-1.5 text-[#1A1A1A] dark:text-[#EDEDED] font-sans">
+            <Keyboard className="w-3.5 h-3.5 text-[#2E4036] dark:text-emerald-400" />
             <span className="font-semibold">Precision Controls:</span>
           </div>
           <div className="flex flex-wrap items-center gap-3">
-            <span><kbd className="px-1.5 py-0.5 rounded bg-[#EAE6DC] text-[#1A1A1A]">Space</kbd> Start / Pause</span>
+            <span><kbd className="px-1.5 py-0.5 rounded bg-[#EAE6DC] dark:bg-[#23232C] dark:border dark:border-white/[0.08] text-[#1A1A1A] dark:text-[#EDEDED]">Space</kbd> Start / Pause</span>
             <span>•</span>
-            <span><kbd className="px-1.5 py-0.5 rounded bg-[#EAE6DC] text-[#1A1A1A]">F</kbd> Zen Sanctuary</span>
+            <span><kbd className="px-1.5 py-0.5 rounded bg-[#EAE6DC] dark:bg-[#23232C] dark:border dark:border-white/[0.08] text-[#1A1A1A] dark:text-[#EDEDED]">F</kbd> Zen Sanctuary</span>
             <span>•</span>
-            <span><kbd className="px-1.5 py-0.5 rounded bg-[#EAE6DC] text-[#1A1A1A]">M</kbd> Master Mute</span>
+            <span><kbd className="px-1.5 py-0.5 rounded bg-[#EAE6DC] dark:bg-[#23232C] dark:border dark:border-white/[0.08] text-[#1A1A1A] dark:text-[#EDEDED]">M</kbd> Master Mute</span>
             <span>•</span>
-            <span><kbd className="px-1.5 py-0.5 rounded bg-[#EAE6DC] text-[#1A1A1A]">Esc</kbd> Exit Zen</span>
+            <span><kbd className="px-1.5 py-0.5 rounded bg-[#EAE6DC] dark:bg-[#23232C] dark:border dark:border-white/[0.08] text-[#1A1A1A] dark:text-[#EDEDED]">Esc</kbd> Exit Zen</span>
           </div>
         </footer>
       </div>
 
-      {/* Global Fullscreen Zen Mode Overlay - Clean Clinical Sanctuary */}
+      {/* Global Fullscreen Zen Mode Overlay - Adaptive Light & Dark */}
       <ZenOverlay
         isOpen={isZenModeOpen}
         onClose={() => setIsZenModeOpen(false)}

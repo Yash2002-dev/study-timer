@@ -1,5 +1,6 @@
 import React from 'react';
 import { TimerMode, TimerEngine } from '../../types/timer';
+import { useTheme } from '../../hooks/useTheme';
 import { 
   Play, 
   Pause, 
@@ -24,6 +25,9 @@ export const TimerDial: React.FC<TimerDialProps> = ({
   onToggleZenMode,
   size = 310,
 }) => {
+  const { resolvedTheme } = useTheme();
+  const isDark = resolvedTheme === 'dark';
+
   const {
     mode,
     isRunning,
@@ -44,13 +48,54 @@ export const TimerDial: React.FC<TimerDialProps> = ({
   // Progress fills up clockwise smoothly
   const strokeDashoffset = circumference * (1 - Math.min(1, Math.max(0, progressRatio)));
 
-  // Precision Clinical Palette: Clean Moss, Terracotta, and Sage
-  const getThemeColors = (currentMode: TimerMode) => {
+  // Precision Clinical Palette: Adaptive Light (Organic Moss) & Dark (Refined Emerald Obsidian)
+  const getThemeColors = (currentMode: TimerMode, dark: boolean) => {
+    if (dark) {
+      switch (currentMode) {
+        case 'shortBreak':
+        case 'longBreak':
+          return {
+            strokeColor: '#F59E0B', // Amber
+            trackColor: 'rgba(255, 255, 255, 0.08)',
+            badgeBg: 'bg-amber-500/15 border border-amber-500/30',
+            badgeText: 'text-amber-300',
+            dotBg: 'bg-amber-400',
+          };
+        case 'flowmodoro':
+          return {
+            strokeColor: '#06B6D4', // Cyan
+            trackColor: 'rgba(255, 255, 255, 0.08)',
+            badgeBg: 'bg-cyan-500/15 border border-cyan-500/30',
+            badgeText: 'text-cyan-300',
+            dotBg: 'bg-cyan-400',
+          };
+        case 'custom':
+          return {
+            strokeColor: '#A855F7', // Purple
+            trackColor: 'rgba(255, 255, 255, 0.08)',
+            badgeBg: 'bg-purple-500/15 border border-purple-500/30',
+            badgeText: 'text-purple-300',
+            dotBg: 'bg-purple-400',
+          };
+        case 'pomodoro':
+        default:
+          return {
+            strokeColor: '#10B981', // Vibrant Emerald
+            trackColor: 'rgba(255, 255, 255, 0.08)',
+            badgeBg: 'bg-emerald-500/15 border border-emerald-500/30',
+            badgeText: 'text-emerald-300',
+            dotBg: 'bg-emerald-400',
+          };
+      }
+    }
+
+    // Light Mode (Organic Tech clinical palette)
     switch (currentMode) {
       case 'shortBreak':
       case 'longBreak':
         return {
           strokeColor: '#8C5A41', // Warm Terracotta / Clay
+          trackColor: '#E6E2D8',
           badgeBg: 'bg-[#F4ECE7]',
           badgeText: 'text-[#8C5A41]',
           dotBg: 'bg-[#8C5A41]',
@@ -58,6 +103,7 @@ export const TimerDial: React.FC<TimerDialProps> = ({
       case 'flowmodoro':
         return {
           strokeColor: '#4D6B5A', // Sage Moss
+          trackColor: '#E6E2D8',
           badgeBg: 'bg-[#E7EFEA]',
           badgeText: 'text-[#3D5447]',
           dotBg: 'bg-[#4D6B5A]',
@@ -65,6 +111,7 @@ export const TimerDial: React.FC<TimerDialProps> = ({
       case 'custom':
         return {
           strokeColor: '#7C674F', // Ochre Sand
+          trackColor: '#E6E2D8',
           badgeBg: 'bg-[#F4EFE7]',
           badgeText: 'text-[#7C674F]',
           dotBg: 'bg-[#7C674F]',
@@ -73,6 +120,7 @@ export const TimerDial: React.FC<TimerDialProps> = ({
       default:
         return {
           strokeColor: '#2E4036', // Deep Organic Moss
+          trackColor: '#E6E2D8',
           badgeBg: 'bg-[#E2ECE5]',
           badgeText: 'text-[#2E4036]',
           dotBg: 'bg-[#2E4036]',
@@ -80,7 +128,7 @@ export const TimerDial: React.FC<TimerDialProps> = ({
     }
   };
 
-  const theme = getThemeColors(mode);
+  const theme = getThemeColors(mode, isDark);
 
   const modeLabel =
     mode === 'pomodoro'
@@ -114,11 +162,12 @@ export const TimerDial: React.FC<TimerDialProps> = ({
             cy={center}
             r={radius}
             fill="none"
-            stroke="#E6E2D8"
+            stroke={theme.trackColor}
             strokeWidth={strokeWidth}
+            className="transition-colors duration-300"
           />
 
-          {/* Foreground Animated Progress Ring with Smooth Precision Easing (cubic-bezier(0.25, 0.46, 0.45, 0.94)) */}
+          {/* Foreground Animated Progress Ring with Smooth Precision Easing */}
           <circle
             cx={center}
             cy={center}
@@ -130,7 +179,7 @@ export const TimerDial: React.FC<TimerDialProps> = ({
             strokeDashoffset={strokeDashoffset}
             strokeLinecap="round"
             style={{
-              transition: 'stroke-dashoffset 950ms cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+              transition: 'stroke-dashoffset 950ms cubic-bezier(0.25, 0.46, 0.45, 0.94), stroke 300ms ease',
             }}
           />
         </svg>
@@ -140,11 +189,11 @@ export const TimerDial: React.FC<TimerDialProps> = ({
           {/* Status Badge */}
           <div className="mb-1.5">
             <span
-              className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-mono font-medium tracking-wide ${theme.badgeBg} ${theme.badgeText}`}
+              className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-mono font-medium tracking-wide transition-colors duration-300 ${theme.badgeBg} ${theme.badgeText}`}
             >
               <span
                 className={`w-2 h-2 rounded-full ${
-                  isRunning ? theme.dotBg : 'bg-[#9E9D95]'
+                  isRunning ? theme.dotBg : isDark ? 'bg-zinc-500' : 'bg-[#9E9D95]'
                 }`}
               />
               {isRunning ? modeLabel.toUpperCase() : 'PAUSED'}
@@ -158,7 +207,7 @@ export const TimerDial: React.FC<TimerDialProps> = ({
             aria-atomic="true"
           >
             <span 
-              className="timer-digits text-6xl sm:text-7xl font-semibold text-[#1A1A1A] tracking-tight tabular-nums select-none"
+              className="timer-digits text-6xl sm:text-7xl font-semibold text-[#1A1A1A] dark:text-[#EDEDED] tracking-tight tabular-nums select-none transition-colors duration-300"
               style={{ fontVariantNumeric: 'tabular-nums' }}
             >
               {formattedTime}
@@ -166,7 +215,7 @@ export const TimerDial: React.FC<TimerDialProps> = ({
           </div>
 
           {/* Active Task Tag Badge */}
-          <div className="flex items-center gap-1.5 text-xs font-medium text-[#5F5E58] bg-[#EAE6DC] px-2.5 py-0.5 rounded-full mb-1">
+          <div className="flex items-center gap-1.5 text-xs font-medium text-[#5F5E58] dark:text-[#A1A1AA] bg-[#EAE6DC] dark:bg-[#23232C] dark:border dark:border-white/[0.08] px-2.5 py-0.5 rounded-full mb-1 transition-colors duration-300">
             <span
               className="w-1.5 h-1.5 rounded-full"
               style={{ backgroundColor: activeTagColor }}
@@ -175,7 +224,7 @@ export const TimerDial: React.FC<TimerDialProps> = ({
           </div>
 
           {/* Progress Percentage in IBM Plex Mono */}
-          <span className="text-[11px] font-mono text-[#7A7972] tabular-nums">
+          <span className="text-[11px] font-mono text-[#7A7972] dark:text-[#71717A] tabular-nums transition-colors duration-300">
             {mode === 'flowmodoro' ? 'Stopwatch active' : `${Math.round(progressRatio * 100)}% elapsed`}
           </span>
         </div>
@@ -188,10 +237,14 @@ export const TimerDial: React.FC<TimerDialProps> = ({
           onClick={isRunning ? pause : start}
           aria-label={isRunning ? 'Pause countdown timer [Space]' : 'Start countdown timer [Space]'}
           title={isRunning ? 'Pause Timer [Space]' : 'Start Timer [Space]'}
-          className={`btn-precision flex items-center justify-center gap-2 px-8 h-12 rounded-2xl font-medium text-sm min-w-[140px] shadow-sm ${
+          className={`btn-precision flex items-center justify-center gap-2 px-8 h-12 rounded-2xl font-medium text-sm min-w-[140px] shadow-sm transition-colors duration-300 ${
             isRunning
-              ? 'bg-[#3D5447] hover:bg-[#2E4036] text-[#FAF9F5]'
-              : 'bg-[#2E4036] hover:bg-[#24332B] text-[#FAF9F5]'
+              ? isDark
+                ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40 hover:bg-amber-500/30'
+                : 'bg-[#3D5447] hover:bg-[#2E4036] text-[#FAF9F5]'
+              : isDark
+                ? 'bg-emerald-500 hover:bg-emerald-400 text-[#09090C] font-semibold shadow-emerald-500/20'
+                : 'bg-[#2E4036] hover:bg-[#24332B] text-[#FAF9F5]'
           }`}
         >
           {isRunning ? (
@@ -212,7 +265,7 @@ export const TimerDial: React.FC<TimerDialProps> = ({
           onClick={reset}
           aria-label="Reset timer interval to beginning"
           title="Reset Timer"
-          className="btn-precision flex items-center justify-center gap-1.5 px-4 h-12 rounded-2xl bg-[#EAE6DC] hover:bg-[#DDD8CB] text-[#1A1A1A] text-xs font-medium"
+          className="btn-precision flex items-center justify-center gap-1.5 px-4 h-12 rounded-2xl bg-[#EAE6DC] hover:bg-[#DDD8CB] text-[#1A1A1A] dark:bg-[#23232C] dark:hover:bg-[#2C2C38] dark:text-[#EDEDED] dark:border dark:border-white/[0.08] text-xs font-medium transition-colors duration-300"
         >
           <RotateCcw className="w-4 h-4" />
           <span>Reset</span>
@@ -224,7 +277,7 @@ export const TimerDial: React.FC<TimerDialProps> = ({
             onClick={extendFiveMinutes}
             aria-label="Add 5 minutes to active session"
             title="Add 5 Minutes to Session"
-            className="btn-precision flex items-center justify-center gap-1.5 px-4 h-12 rounded-2xl bg-[#EAE6DC] hover:bg-[#DDD8CB] text-[#2E4036] text-xs font-medium"
+            className="btn-precision flex items-center justify-center gap-1.5 px-4 h-12 rounded-2xl bg-[#EAE6DC] hover:bg-[#DDD8CB] text-[#2E4036] dark:bg-[#23232C] dark:hover:bg-[#2C2C38] dark:text-emerald-400 dark:border dark:border-white/[0.08] text-xs font-medium transition-colors duration-300"
           >
             <PlusCircle className="w-4 h-4" />
             <span>+5m</span>
@@ -236,7 +289,7 @@ export const TimerDial: React.FC<TimerDialProps> = ({
           onClick={skip}
           aria-label="Skip to next session mode"
           title="Skip to Next Mode"
-          className="btn-precision flex items-center justify-center gap-1.5 px-4 h-12 rounded-2xl bg-[#EAE6DC] hover:bg-[#DDD8CB] text-[#5F5E58] hover:text-[#1A1A1A] text-xs font-medium"
+          className="btn-precision flex items-center justify-center gap-1.5 px-4 h-12 rounded-2xl bg-[#EAE6DC] hover:bg-[#DDD8CB] text-[#5F5E58] hover:text-[#1A1A1A] dark:bg-[#23232C] dark:hover:bg-[#2C2C38] dark:text-[#A1A1AA] dark:hover:text-[#EDEDED] dark:border dark:border-white/[0.08] text-xs font-medium transition-colors duration-300"
         >
           <SkipForward className="w-4 h-4" />
           <span>Skip</span>
@@ -248,7 +301,7 @@ export const TimerDial: React.FC<TimerDialProps> = ({
             onClick={onToggleZenMode}
             aria-label="Enter Zen Fullscreen Mode [F]"
             title="Enter Zen Fullscreen Mode [F]"
-            className="btn-precision flex items-center justify-center gap-1.5 px-4 h-12 rounded-2xl bg-[#EAE6DC] hover:bg-[#DDD8CB] text-[#2E4036] hover:text-[#1A1A1A] text-xs font-medium"
+            className="btn-precision flex items-center justify-center gap-1.5 px-4 h-12 rounded-2xl bg-[#EAE6DC] hover:bg-[#DDD8CB] text-[#2E4036] hover:text-[#1A1A1A] dark:bg-[#23232C] dark:hover:bg-[#2C2C38] dark:text-emerald-400 dark:hover:text-emerald-300 dark:border dark:border-white/[0.08] text-xs font-medium transition-colors duration-300"
           >
             <Maximize2 className="w-4 h-4" />
             <span className="hidden sm:inline">Zen Mode</span>
