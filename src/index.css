@@ -12,23 +12,31 @@
     background-color: #F2F0E9;
     color: #1A1A1A;
     overflow-x: hidden;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, Helvetica, Arial, sans-serif;
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
 }
 
-/* Zero Cumulative Layout Shift (CLS = 0.00) Numeric Protocols */
+/* Precision Digital Instrument Typography: IBM Plex Mono & Tabular Numerics */
 .tabular-nums {
   font-variant-numeric: tabular-nums;
-  font-feature-settings: "tnum";
+  font-feature-settings: "tnum" 1, "zero" 1;
+}
+
+.font-mono,
+code,
+kbd {
+  font-family: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
 }
 
 .timer-digits {
+  font-family: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   font-variant-numeric: tabular-nums;
-  font-feature-settings: "tnum";
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
-  letter-spacing: -0.03em;
+  font-feature-settings: "tnum" 1, "zero" 1;
+  letter-spacing: -0.025em;
 }
 
 /* Organic Tech Clinical Boutique Surfaces — Flat, Zero Borders, Generous Whitespace */
@@ -40,13 +48,35 @@
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.02), 0 2px 8px -2px rgba(0, 0, 0, 0.03);
 }
 
-/* Tactile Micro-Interactions */
+/* Precision Magnetic Hover Micro-Interactions (cubic-bezier(0.25, 0.46, 0.45, 0.94)) */
+.btn-precision,
 .btn-tactile {
-  transition: transform 140ms cubic-bezier(0.16, 1, 0.3, 1), background-color 140ms ease, opacity 140ms ease;
+  transition: transform 220ms cubic-bezier(0.25, 0.46, 0.45, 0.94), 
+              background-color 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94), 
+              box-shadow 220ms cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              color 180ms ease,
+              opacity 180ms ease;
+  will-change: transform;
 }
 
+.btn-precision:hover,
+.btn-tactile:hover {
+  transform: translateY(-1.5px);
+  box-shadow: 0 4px 12px -2px rgba(46, 64, 54, 0.10);
+}
+
+.btn-precision:active,
 .btn-tactile:active {
-  transform: scale(0.98);
+  transform: translateY(0.5px) scale(0.99);
+  transition-duration: 90ms;
+}
+
+/* Strict Accessibility (WCAG 2.2 AAA): High-Contrast Focus Visible Rings */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible {
+  outline: 2px solid #2E4036 !important;
+  outline-offset: 2px !important;
 }
 
 /* Custom Minimal Range Sliders */

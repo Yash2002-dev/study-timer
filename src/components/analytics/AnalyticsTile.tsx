@@ -79,11 +79,11 @@ export const AnalyticsTile: React.FC<AnalyticsTileProps> = ({ analytics }) => {
         {/* Header */}
         <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#EAE6DC] pb-4 mb-5">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-xl bg-[#E2ECE5] flex items-center justify-center text-[#2E4036]">
+            <div className="w-8 h-8 rounded-xl bg-[#E2ECE5] flex items-center justify-center text-[#2E4036] shrink-0">
               <BarChart3 className="w-4 h-4" />
             </div>
             <div>
-              <h2 className="text-sm font-semibold tracking-tight text-[#1A1A1A] flex items-center gap-2">
+              <h2 className="text-sm font-bold tracking-tight text-[#1A1A1A] flex items-center gap-2">
                 Weekly Productivity & Streak
               </h2>
               <p className="text-[11px] text-[#5F5E58]">Activity heatmap & focus milestones</p>
@@ -108,18 +108,19 @@ export const AnalyticsTile: React.FC<AnalyticsTileProps> = ({ analytics }) => {
 
             <button
               onClick={triggerMilestoneReward}
+              aria-label="Celebrate focus milestones with confetti"
               title="Trigger Milestone Celebration Confetti"
-              className="btn-tactile p-1.5 rounded-xl bg-[#EAE6DC] hover:bg-[#DDD8CB] text-[#2E4036] transition-all active:scale-[0.98]"
+              className="btn-precision p-1.5 rounded-xl bg-[#EAE6DC] hover:bg-[#DDD8CB] text-[#2E4036]"
             >
               <Sparkles className="w-4 h-4" />
             </button>
           </div>
         </div>
 
-        {/* Metric Cards Row */}
+        {/* Metric Cards Row - High-Contrast IBM Plex Mono Readouts */}
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-5">
           <div className="bg-[#F2EFE9] rounded-2xl p-3.5">
-            <span className="text-[10px] text-[#5F5E58] uppercase font-mono block mb-1 flex items-center gap-1">
+            <span className="text-[10px] text-[#5F5E58] uppercase font-mono block mb-1 flex items-center gap-1 tracking-wider">
               <Clock className="w-3 h-3 text-[#2E4036]" />
               Total Focus
             </span>
@@ -130,7 +131,7 @@ export const AnalyticsTile: React.FC<AnalyticsTileProps> = ({ analytics }) => {
           </div>
 
           <div className="bg-[#F2EFE9] rounded-2xl p-3.5">
-            <span className="text-[10px] text-[#5F5E58] uppercase font-mono block mb-1 flex items-center gap-1">
+            <span className="text-[10px] text-[#5F5E58] uppercase font-mono block mb-1 flex items-center gap-1 tracking-wider">
               <Calendar className="w-3 h-3 text-[#4D6B5A]" />
               This Week
             </span>
@@ -141,7 +142,7 @@ export const AnalyticsTile: React.FC<AnalyticsTileProps> = ({ analytics }) => {
           </div>
 
           <div className="col-span-2 sm:col-span-1 bg-[#F2EFE9] rounded-2xl p-3.5">
-            <span className="text-[10px] text-[#5F5E58] uppercase font-mono block mb-1 flex items-center gap-1">
+            <span className="text-[10px] text-[#5F5E58] uppercase font-mono block mb-1 flex items-center gap-1 tracking-wider">
               <Award className="w-3 h-3 text-[#8C5A41]" />
               Total Sessions
             </span>
@@ -155,7 +156,7 @@ export const AnalyticsTile: React.FC<AnalyticsTileProps> = ({ analytics }) => {
         {/* 28-Day GitHub-style Heatmap Grid */}
         <div className="bg-[#F2EFE9] rounded-2xl p-4 mb-5">
           <div className="flex items-center justify-between mb-3">
-            <span className="text-xs font-semibold text-[#1A1A1A] flex items-center gap-1.5">
+            <span className="text-xs font-bold text-[#1A1A1A] flex items-center gap-1.5 font-sans">
               <span>Past 4 Weeks Activity:</span>
             </span>
             <div className="flex items-center gap-1 text-[10px] font-mono text-[#5F5E58]">
@@ -169,54 +170,58 @@ export const AnalyticsTile: React.FC<AnalyticsTileProps> = ({ analytics }) => {
             </div>
           </div>
 
-          {/* Heatmap Grid of 28 Days (4 columns x 7 rows, Sunday to Saturday) */}
+          {/* Heatmap Grid of 28 Days (4 columns x 7 rows) */}
           <div className="flex justify-between items-center gap-1 sm:gap-2 overflow-x-auto py-1">
             {Array.from({ length: 4 }).map((_, weekIndex) => (
               <div key={weekIndex} className="flex flex-col gap-1.5">
                 {heatmapDays.slice(weekIndex * 7, weekIndex * 7 + 7).map((day) => (
-                  <div
+                  <button
                     key={day.date}
+                    type="button"
                     onMouseEnter={() => setHoveredDay(day)}
                     onMouseLeave={() => setHoveredDay(null)}
-                    className={`w-5 h-5 sm:w-6 sm:h-6 rounded-md transition-all duration-150 cursor-pointer ${getHeatmapColor(
+                    onFocus={() => setHoveredDay(day)}
+                    onBlur={() => setHoveredDay(null)}
+                    aria-label={`${day.date}: ${day.totalMinutes} minutes, ${day.sessionCount} sessions`}
+                    className={`w-5 h-5 sm:w-6 sm:h-6 rounded-md transition-all duration-150 ease-[cubic-bezier(0.25,0.46,0.45,0.94)] ${getHeatmapColor(
                       day.level
                     )} hover:ring-2 hover:ring-[#2E4036]/50`}
-                    title={`${day.date}: ${day.totalMinutes} mins (${day.sessionCount} sessions)`}
                   />
                 ))}
               </div>
             ))}
           </div>
 
-          {/* Interactive Tooltip Card */}
+          {/* Interactive Tooltip Card - Monospace Tabular */}
           <div className="mt-3 pt-2 border-t border-[#DDD8CB] flex items-center justify-between text-[11px] font-mono text-[#5F5E58]">
             {hoveredDay ? (
               <span>
-                <strong className="text-[#1A1A1A]">{hoveredDay.date}</strong>: {hoveredDay.totalMinutes} min ({hoveredDay.sessionCount} sessions)
+                <strong className="text-[#1A1A1A]">{hoveredDay.date}</strong>: {hoveredDay.totalMinutes}m ({hoveredDay.sessionCount} sessions)
               </span>
             ) : (
-              <span>Hover over a block to view focus summary</span>
+              <span>Hover or focus on a block to view focus summary</span>
             )}
-            <span className="text-[#7A7972]">{heatmapDays.length} days recorded</span>
+            <span className="text-[#7A7972] tabular-nums">{heatmapDays.length} days recorded</span>
           </div>
         </div>
 
         {/* Import Status Alert */}
         {importStatus && (
-          <div className="mb-4 p-2.5 rounded-xl bg-[#E2ECE5] text-[#2E4036] text-xs font-mono animate-fadeIn">
+          <div className="mb-4 p-2.5 rounded-xl bg-[#E2ECE5] text-[#2E4036] text-xs font-mono animate-fadeIn" role="status">
             {importStatus}
           </div>
         )}
       </div>
 
-      {/* JSON Backup & Restore Actions */}
+      {/* JSON Backup & Restore Actions - Magnetic Hover */}
       <div className="flex flex-wrap items-center justify-between gap-3 pt-4 border-t border-[#EAE6DC]">
         <span className="text-[11px] font-mono text-[#7A7972]">Local Storage Sync</span>
         <div className="flex items-center gap-2">
           {/* Quick JSON Export Button */}
           <button
             onClick={downloadBackupFile}
-            className="btn-tactile flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#EAE6DC] hover:bg-[#DDD8CB] text-[#1A1A1A] text-xs font-mono active:scale-[0.98]"
+            aria-label="Download study sessions JSON backup"
+            className="btn-precision flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[#EAE6DC] hover:bg-[#DDD8CB] text-[#1A1A1A] text-xs font-mono"
             title="Download study sessions JSON backup"
           >
             <Download className="w-3.5 h-3.5 text-[#2E4036]" />
@@ -226,7 +231,8 @@ export const AnalyticsTile: React.FC<AnalyticsTileProps> = ({ analytics }) => {
           {/* Quick JSON Import Button */}
           <button
             onClick={() => fileInputRef.current?.click()}
-            className="btn-tactile flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#EAE6DC] hover:bg-[#DDD8CB] text-[#1A1A1A] text-xs font-mono active:scale-[0.98]"
+            aria-label="Import and restore sessions from JSON backup file"
+            className="btn-precision flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[#EAE6DC] hover:bg-[#DDD8CB] text-[#1A1A1A] text-xs font-mono"
             title="Import and restore sessions JSON backup"
           >
             <Upload className="w-3.5 h-3.5 text-[#2E4036]" />
@@ -238,6 +244,7 @@ export const AnalyticsTile: React.FC<AnalyticsTileProps> = ({ analytics }) => {
             type="file"
             accept=".json,application/json"
             onChange={handleFileUpload}
+            aria-label="Upload backup JSON file"
             className="hidden"
           />
         </div>

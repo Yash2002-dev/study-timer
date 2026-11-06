@@ -41,11 +41,12 @@ export default {
         }
       },
       fontFamily: {
-        mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', '"Liberation Mono"', '"Courier New"', 'monospace'],
-        sans: ['-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'Roboto', 'Inter', 'Helvetica', 'Arial', 'sans-serif'],
+        sans: ['"Plus Jakarta Sans"', '-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'Roboto', 'Helvetica', 'Arial', 'sans-serif'],
+        mono: ['"IBM Plex Mono"', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'monospace'],
       },
       transitionTimingFunction: {
-        spring: 'cubic-bezier(0.16, 1, 0.3, 1)',
+        'precision': 'cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+        'calm': 'cubic-bezier(0.25, 0.46, 0.45, 0.94)',
       }
     },
   },

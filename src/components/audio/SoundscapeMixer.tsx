@@ -29,21 +29,21 @@ const TRACKS: TrackMeta[] = [
   {
     id: 'pinkNoise',
     name: 'Pink Noise',
-    sub: '1/f gentle static acoustic masking',
+    sub: '1/f gentle acoustic masking',
     icon: Radio,
     accentColor: '#2E4036',
   },
   {
     id: 'binaural',
     name: '40Hz Binaural',
-    sub: 'Gamma focus carrier waves (216Hz + 256Hz)',
+    sub: 'Gamma focus carrier (216Hz + 256Hz)',
     icon: Headphones,
     accentColor: '#4D6B5A',
   },
   {
     id: 'rain',
     name: 'Rain Simulator',
-    sub: 'Downpour bed + randomized drops',
+    sub: 'Downpour bed + organic drops',
     icon: CloudRain,
     accentColor: '#3D5447',
   },
@@ -78,11 +78,11 @@ export function SoundscapeMixer({ soundscape }: SoundscapeMixerProps) {
       <div>
         <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#EAE6DC] pb-4 mb-5">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-xl bg-[#E2ECE5] flex items-center justify-center text-[#2E4036]">
+            <div className="w-8 h-8 rounded-xl bg-[#E2ECE5] flex items-center justify-center text-[#2E4036] shrink-0">
               <Sliders className="w-4 h-4" />
             </div>
             <div>
-              <h2 className="text-sm font-semibold tracking-tight text-[#1A1A1A] flex items-center gap-2">
+              <h2 className="text-sm font-bold tracking-tight text-[#1A1A1A] flex items-center gap-2">
                 Ambient Soundscape Mixer
                 {activeCount > 0 && (
                   <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#E2ECE5] text-[#2E4036] font-mono tabular-nums">
@@ -90,7 +90,7 @@ export function SoundscapeMixer({ soundscape }: SoundscapeMixerProps) {
                   </span>
                 )}
               </h2>
-              <p className="text-[11px] text-[#5F5E58]">Procedural Web Audio • Zero external samples</p>
+              <p className="text-[11px] text-[#5F5E58]">Procedural Web Audio • Mathematical synthesis</p>
             </div>
           </div>
 
@@ -106,7 +106,7 @@ export function SoundscapeMixer({ soundscape }: SoundscapeMixerProps) {
                 step="0.01"
                 value={isMuted ? 0 : masterVolume}
                 onChange={(e) => setMasterVolume(parseFloat(e.target.value))}
-                aria-label="Master Volume"
+                aria-label="Master Sound Volume"
                 className="w-16 sm:w-20 h-1.5 bg-[#DDD8CB] rounded-lg appearance-none cursor-pointer accent-[#2E4036]"
               />
               <span className="text-[10px] font-mono text-[#1A1A1A] w-8 text-right tabular-nums">
@@ -117,8 +117,9 @@ export function SoundscapeMixer({ soundscape }: SoundscapeMixerProps) {
             {/* Mute Button */}
             <button
               onClick={toggleMute}
+              aria-label={isMuted ? 'Unmute soundscape [M]' : 'Mute soundscape [M]'}
               title="Toggle Mute (Shortcut: M)"
-              className={`btn-tactile p-2 rounded-xl transition-all active:scale-[0.98] flex items-center gap-1 text-xs font-mono ${
+              className={`btn-precision p-2 rounded-xl flex items-center gap-1 text-xs font-mono ${
                 isMuted
                   ? 'bg-[#F4ECE7] text-[#8C5A41]'
                   : 'bg-[#EAE6DC] hover:bg-[#DDD8CB] text-[#1A1A1A]'
@@ -132,8 +133,9 @@ export function SoundscapeMixer({ soundscape }: SoundscapeMixerProps) {
             {activeCount > 0 && (
               <button
                 onClick={stopAll}
+                aria-label="Stop all currently playing tracks"
                 title="Stop All Tracks"
-                className="btn-tactile p-2 rounded-xl bg-[#EAE6DC] hover:bg-[#DDD8CB] text-[#5F5E58] hover:text-[#8C5A41] transition-all active:scale-[0.98]"
+                className="btn-precision p-2 rounded-xl bg-[#EAE6DC] hover:bg-[#DDD8CB] text-[#5F5E58] hover:text-[#8C5A41]"
               >
                 <PowerOff className="w-4 h-4" />
               </button>
@@ -141,7 +143,7 @@ export function SoundscapeMixer({ soundscape }: SoundscapeMixerProps) {
           </div>
         </div>
 
-        {/* Preset Badges */}
+        {/* Preset Badges with Precision Magnetic Hover */}
         <div className="flex flex-wrap items-center gap-2 mb-5">
           <span className="text-[11px] text-[#5F5E58] flex items-center gap-1 font-mono">
             <Sparkles className="w-3 h-3 text-[#2E4036]" />
@@ -149,19 +151,22 @@ export function SoundscapeMixer({ soundscape }: SoundscapeMixerProps) {
           </span>
           <button
             onClick={() => applyPreset('deepFocus')}
-            className="btn-tactile text-[11px] font-medium px-2.5 py-1 rounded-xl bg-[#EAE6DC] hover:bg-[#DDD8CB] text-[#1A1A1A] transition-all active:scale-[0.98]"
+            aria-label="Apply Deep Focus ambient sound preset"
+            className="btn-precision text-[11px] font-medium px-2.5 py-1 rounded-xl bg-[#EAE6DC] hover:bg-[#DDD8CB] text-[#1A1A1A]"
           >
             Deep Focus
           </button>
           <button
             onClick={() => applyPreset('rainyLibrary')}
-            className="btn-tactile text-[11px] font-medium px-2.5 py-1 rounded-xl bg-[#EAE6DC] hover:bg-[#DDD8CB] text-[#1A1A1A] transition-all active:scale-[0.98]"
+            aria-label="Apply Rainy Haven ambient sound preset"
+            className="btn-precision text-[11px] font-medium px-2.5 py-1 rounded-xl bg-[#EAE6DC] hover:bg-[#DDD8CB] text-[#1A1A1A]"
           >
             Rainy Haven
           </button>
           <button
             onClick={() => applyPreset('zenMeditation')}
-            className="btn-tactile text-[11px] font-medium px-2.5 py-1 rounded-xl bg-[#EAE6DC] hover:bg-[#DDD8CB] text-[#1A1A1A] transition-all active:scale-[0.98]"
+            aria-label="Apply Zen Sanctuary ambient sound preset"
+            className="btn-precision text-[11px] font-medium px-2.5 py-1 rounded-xl bg-[#EAE6DC] hover:bg-[#DDD8CB] text-[#1A1A1A]"
           >
             Zen Sanctuary
           </button>
@@ -177,7 +182,7 @@ export function SoundscapeMixer({ soundscape }: SoundscapeMixerProps) {
             return (
               <div
                 key={t.id}
-                className={`p-3.5 rounded-2xl transition-all duration-200 ${
+                className={`p-3.5 rounded-2xl transition-all duration-200 ease-[cubic-bezier(0.25,0.46,0.45,0.94)] ${
                   isActive
                     ? 'bg-[#E7EFEA]'
                     : 'bg-[#F2EFE9] hover:bg-[#ECE8DF]'
@@ -185,10 +190,12 @@ export function SoundscapeMixer({ soundscape }: SoundscapeMixerProps) {
               >
                 <div className="flex items-center justify-between mb-2.5">
                   <div className="flex items-center gap-2.5">
-                    {/* Track Toggle Button */}
+                    {/* Track Toggle Button - Magnetic Hover */}
                     <button
                       onClick={() => toggleTrack(t.id)}
-                      className={`btn-tactile w-8 h-8 rounded-xl flex items-center justify-center transition-all active:scale-[0.98] ${
+                      aria-label={isActive ? `Pause ${t.name}` : `Play ${t.name}`}
+                      aria-pressed={isActive}
+                      className={`btn-precision w-8 h-8 rounded-xl flex items-center justify-center ${
                         isActive
                           ? 'bg-[#2E4036] text-[#FAF9F5]'
                           : 'bg-[#EAE6DC] hover:bg-[#DDD8CB] text-[#5F5E58] hover:text-[#1A1A1A]'
@@ -200,16 +207,16 @@ export function SoundscapeMixer({ soundscape }: SoundscapeMixerProps) {
 
                     <div>
                       <div className="flex items-center gap-2">
-                        <span className="text-xs font-semibold text-[#1A1A1A] tracking-tight">{t.name}</span>
+                        <span className="text-xs font-bold text-[#1A1A1A] tracking-tight">{t.name}</span>
                         {isActive && (
-                          <span className="w-1.5 h-1.5 rounded-full bg-[#2E4036] animate-pulse" />
+                          <span className="w-1.5 h-1.5 rounded-full bg-[#2E4036]" />
                         )}
                       </div>
                       <p className="text-[10px] text-[#5F5E58] truncate max-w-[170px]">{t.sub}</p>
                     </div>
                   </div>
 
-                  {/* Track Volume Readout - Zero CLS */}
+                  {/* Track Volume Readout - Zero CLS, IBM Plex Mono */}
                   <span className="text-xs font-mono text-[#5F5E58] tabular-nums min-w-[3ch] text-right">
                     {Math.round(volume * 100)}%
                   </span>
@@ -224,7 +231,7 @@ export function SoundscapeMixer({ soundscape }: SoundscapeMixerProps) {
                     step="0.01"
                     value={volume}
                     onChange={(e) => setTrackVolume(t.id, parseFloat(e.target.value))}
-                    aria-label={`${t.name} Volume`}
+                    aria-label={`${t.name} Volume Level`}
                     className="w-full h-1.5 bg-[#DDD8CB] rounded-lg appearance-none cursor-pointer accent-[#2E4036]"
                   />
                 </div>

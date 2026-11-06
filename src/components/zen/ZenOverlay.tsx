@@ -53,20 +53,24 @@ export const ZenOverlay: React.FC<ZenOverlayProps> = ({
   return (
     <div 
       data-zen-overlay="true" 
-      className="fixed inset-0 z-50 bg-[#F2F0E9] flex flex-col justify-between items-center p-6 md:p-10 select-none animate-fadeIn transition-colors duration-700"
+      className="fixed inset-0 z-50 bg-[#F2F0E9] flex flex-col justify-between items-center p-6 md:p-10 select-none animate-fadeIn transition-colors duration-500 ease-[cubic-bezier(0.25,0.46,0.45,0.94)]"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Zen Focus Sanctuary"
     >
       {/* Top Floating Utility Bar */}
       <div className="w-full max-w-4xl flex items-center justify-between text-xs font-mono text-[#5F5E58]">
         <div className="flex items-center gap-2">
-          <span className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: activeTagColor }} />
-          <span className="text-[#1A1A1A] font-semibold">{activeTagLabel}</span>
+          <span className="w-2 h-2 rounded-full" style={{ backgroundColor: activeTagColor }} />
+          <span className="text-[#1A1A1A] font-medium font-sans">{activeTagLabel}</span>
           <span className="text-[#7A7972]">•</span>
-          <span className="text-[#2E4036] font-medium">ZEN SANCTUARY</span>
+          <span className="text-[#2E4036] font-mono tracking-wider">ZEN SANCTUARY</span>
         </div>
 
         <button
           onClick={onClose}
-          className="btn-tactile flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#EAE6DC] hover:bg-[#DDD8CB] text-[#1A1A1A] transition-all active:scale-[0.98]"
+          aria-label="Exit Zen mode [Escape]"
+          className="btn-precision flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#EAE6DC] hover:bg-[#DDD8CB] text-[#1A1A1A]"
           title="Exit Zen Mode [F or Esc]"
         >
           <Minimize2 className="w-3.5 h-3.5" />
@@ -74,13 +78,13 @@ export const ZenOverlay: React.FC<ZenOverlayProps> = ({
         </button>
       </div>
 
-      {/* Central Screen: Expanded Dial in Serene Cream Space */}
+      {/* Central Screen: Expanded Precision Dial in Serene Cream Space */}
       <div className="my-auto flex flex-col items-center justify-center relative">
         <TimerDial
           timer={timer}
           activeTagLabel={activeTagLabel}
           activeTagColor={activeTagColor}
-          size={320}
+          size={340}
         />
       </div>
 
@@ -89,7 +93,9 @@ export const ZenOverlay: React.FC<ZenOverlayProps> = ({
         {/* Toggle drawer trigger */}
         <button
           onClick={() => setShowSoundControls(!showSoundControls)}
-          className="btn-tactile flex items-center gap-1.5 text-[11px] font-mono text-[#5F5E58] hover:text-[#1A1A1A] transition-colors px-3.5 py-1.5 rounded-full bg-[#EAE6DC] hover:bg-[#DDD8CB] active:scale-[0.98]"
+          aria-expanded={showSoundControls}
+          aria-label="Toggle ambient audio controls drawer"
+          className="btn-precision flex items-center gap-1.5 text-[11px] font-mono text-[#5F5E58] hover:text-[#1A1A1A] px-3.5 py-1.5 rounded-full bg-[#EAE6DC] hover:bg-[#DDD8CB]"
         >
           <SlidersHorizontal className="w-3 h-3 text-[#2E4036]" />
           <span>Ambient Audio {activeCount > 0 ? `(${activeCount} active)` : ''}</span>
@@ -102,7 +108,8 @@ export const ZenOverlay: React.FC<ZenOverlayProps> = ({
             <div className="flex items-center gap-2">
               <button
                 onClick={toggleMute}
-                className={`btn-tactile p-2 rounded-xl transition-all active:scale-[0.98] ${
+                aria-label={isMuted ? 'Unmute ambient sound' : 'Mute ambient sound'}
+                className={`btn-precision p-2 rounded-xl ${
                   isMuted
                     ? 'bg-[#F4ECE7] text-[#8C5A41]'
                     : 'bg-[#EAE6DC] hover:bg-[#DDD8CB] text-[#1A1A1A]'
